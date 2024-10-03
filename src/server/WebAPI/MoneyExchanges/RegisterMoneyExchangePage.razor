@@ -1,0 +1,77 @@
+﻿@using WebAPI.CollaboratorRoles;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.Proformas
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.RegisterTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(@Endpoints.Register,$"#{WebAPI.Users.MainPage.Workspace}"))>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col-4">
+                            <SelectInput Property=@nameof(RegisterMoneyExchange.Command.FromCurrency)
+                                         Label="From Currency"
+                                         Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         Required=true>
+                            </SelectInput>
+                        </div>
+                        <div class="col-4">
+                            <NumberInput Property=@nameof(RegisterMoneyExchange.Command.FromAmount)
+                                         Label="From Amount"
+                                         Placeholder="From Amount"
+                                         Prefix="$"
+                                         Min=0.0001m
+                                         Step=0.0001m
+                                         Value="0"
+                                         Required=true />
+                        </div>
+                        <div class="col-4">
+                            <NumberInput Property=@nameof(RegisterMoneyExchange.Command.Rate)
+                                         Label="Rate"
+                                         Placeholder="Rate"
+                                         Prefix="$"
+                                         Min=0.0001m
+                                         Step=0.0001m
+                                         Value="0"
+                                         Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-4">
+                            <SelectInput Property=@nameof(RegisterMoneyExchange.Command.ToCurrency)
+                                         Label="To Currency"
+                                         Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         Required=true>
+                            </SelectInput>
+                        </div>
+                        <div class="col-4">
+                            <NumberInput Property=@nameof(RegisterMoneyExchange.Command.ToAmount)
+                                         Label="To Amount"
+                                         Placeholder="To Amount"
+                                         Prefix="$"
+                                         Min=0.0001m
+                                         Step=0.0001m
+                                         Value="0"
+                                         Required=true />
+                        </div>
+                        <div class="col-4">
+                            <DateInput Property=@nameof(RegisterMoneyExchange.Command.IssuedAt)
+                                       Label="Issue At"
+                                       Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+
+}

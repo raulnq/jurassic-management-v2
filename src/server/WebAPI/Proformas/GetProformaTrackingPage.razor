@@ -1,0 +1,88 @@
+﻿@using WebAPI.Clients;
+@using WebAPI.CollaboratorRoles
+@using WebAPI.Collaborators
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalView Title=@Endpoints.TrackingTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(Result.SubTotal)
+                                 Label="SubTotal"
+                                 Prefix="$"
+                                 Value=@Result.SubTotal
+                                 Readonly=true />
+                </div>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(Result.Commission)
+                                 Label="Commission"
+                                 Prefix="+$"
+                                 Value=@Result.Commission
+                                 Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(Result.Discount)
+                                 Label="Discount"
+                                 Prefix="-$"
+                                 Value=@Result.Discount
+                                 Readonly=true />
+                </div>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(Result.Total)
+                                 Label="Total (Proforma)"
+                                 Prefix="=$"
+                                 Value=@Result.Total
+                                 Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(Result.TotalInvoices)
+                                 Label="Total (Invoices)"
+                                 Prefix="$"
+                                 Value=@Result.TotalInvoices
+                                 Readonly=true />
+                </div>
+                <div class="col-6">
+                    <NumberInput Property="DifferenceProforma"
+                                 Label="Invoices - Proforma"
+                                 Prefix="$"
+                                 Value=@(@Result.TotalInvoices-Result.Total)
+                                 Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(Result.TotalCollections)
+                                 Label="Total (Collections)"
+                                 Prefix="$"
+                                 Value=@Result.TotalCollections
+                                 Readonly=true />
+                </div>
+                <div class="col-6">
+                    <NumberInput Property="DifferenceInvoice"
+                                 Label="Collections - Invoices"
+                                 Prefix="$"
+                                 Value=@(@Result.TotalCollections-Result.TotalInvoices)
+                                 Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+    </Content>
+</ModalView>
+
+@code {
+    [Parameter, EditorRequired]
+    public GetProformaTracking.Result Result { get; set; } = default!;
+
+}

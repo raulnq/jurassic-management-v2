@@ -1,0 +1,86 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.JiraProfiles
+@using WebAPI.Proformas;
+@using global::Infrastructure
+
+<Section Title=@Endpoints.WorkItemTitle>
+    <Content>
+        <Toolbar>
+            <Actions>
+                <ActionButton Text=@Endpoints.AddWorkItemTitle
+                              Icon=@Icons.Add
+                              IsDisabled=@(!Proforma.CanAddWorkItems())
+                              HtmxProps=@(new HtmxProps(Endpoints.AddWorkItem, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"proformaId":"{{Query.ProformaId}}", "week":"{{Query.Week}}"}"""}) />
+                <ActionButton Text=@Endpoints.LoadWorkItemsTitle
+                              Icon=@Icons.Add
+                              Id="load"
+                              IsDisabled=@(!Proforma.CanAddWorkItems() || !AnyJiraProfileProject)
+                              HtmxProps=@(new HtmxProps(Endpoints.GetLoadWorkItems(Query.ProformaId!.Value, Query.Week!.Value), $"#{List}",Swap.OuterHTML,$"#{List}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$"{{\"Start\": \"{ProformaWeek.Start:yyy-MM-dd}\", \"End\": \"{ProformaWeek.End:yyyy-MM-dd}\"}}"}) />
+            </Actions>
+        </Toolbar>
+        <div id=@List>
+            <DataTable TResult=ListProformaWeekWorkItems.Result
+                       Result=@Result.Items
+                       Context="item">
+                <TableHeader>
+                    <th></th>
+                    <th>Collaborator</th>
+                    <th>Role</th>
+                    <th>Hours</th>
+                    <th>Free Hours</th>
+                    <th class="text-end">Profit Amount</th>
+                    <th class="text-end">Gross Salary</th>
+                    <th class="text-end">Sub Total</th>
+                    <th class="text-end">Fee Amount</th>
+                </TableHeader>
+                <RowTemplate>
+                    <RowToolbar>
+                        <Actions>
+                            <ActionLink HtmxProps=@(new HtmxProps(Endpoints.EditWorkItem, $"#{WebAPI.Users.MainPage.Dialog}") {Vals=$$"""{"proformaId":"{{item.ProformaId}}", "week":"{{item.Week}}", "collaboratorId":"{{item.CollaboratorId}}"}"""})
+                                        IsDisabled=@(!Proforma.CanEditWorkItems())
+                                        Icon=@Icons.Edit />
+                            <ActionLink HtmxProps=@(new HtmxProps(Endpoints.RemoveWorkItem, $"#{List}",Swap.OuterHTML, $"#{List}"){ Confirm = "Are you sure?", HttpMethod="DELETE", Vals=$$"""{"proformaId":"{{item.ProformaId}}", "week":"{{item.Week}}", "collaboratorId":"{{item.CollaboratorId}}"}"""})
+                                        IsDisabled=@(!Proforma.CanRemoveWorkItems())
+                                        Icon=@Icons.Delete />
+                        </Actions>
+                    </RowToolbar>
+                    <td>@item.CollaboratorName</td>
+                    <td>@item.CollaboratorRoleName</td>
+                    <td>@item.Hours</td>
+                    <td>@item.FreeHours</td>
+                    <td class="text-end">@item.ProfitAmount.ToMoneyFormat()</td>
+                    <td class="text-end">@item.GrossSalary.ToMoneyFormat()</td>
+                    <td class="text-end">@item.SubTotal.ToMoneyFormat()</td>
+                    <td class="text-end">@item.FeeAmount.ToMoneyFormat()</td>
+                </RowTemplate>
+            </DataTable>
+            <Pagination Query=@Query
+                        Result=@Result
+                        HtmxProps=@(new HtmxProps(Endpoints.ListWorkItems, $"#{List}", Swap.OuterHTML, $"#{List}"){Vals=$$"""{"proformaId":"{{Query.ProformaId}}", "week":"{{Query.Week}}"}"""}) />
+        </div>
+    </Content>
+</Section>
+<div id=@GetProformaPage.Totals hx-swap-oob="true">
+    <TotalsSectionPage Total=@Proforma.Total
+                       Commission=@Proforma.Commission
+                       Discount=@Proforma.Discount
+                       SubTotal=@Proforma.SubTotal />
+</div>
+<div id="@ListProformaWeeksPage.WeekColumnHours-@ProformaWeek.Week" hx-swap-oob="true">@ProformaWeek.WorkItems.Sum(pw => pw.Hours)</div>
+<div id="@ListProformaWeeksPage.WeekColumnPenalty-@ProformaWeek.Week" hx-swap-oob="true">@ProformaWeek.Penalty</div>
+<div id="@ListProformaWeeksPage.WeekColumnSubTotal-@ProformaWeek.Week" hx-swap-oob="true">@ProformaWeek.SubTotal</div>
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListProformaWeekWorkItems.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListProformaWeekWorkItems.Query Query { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public Proforma Proforma { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ProformaWeek ProformaWeek { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public bool AnyJiraProfileProject { get; set; }
+
+    public const string List = "collaborator-list-target";
+}

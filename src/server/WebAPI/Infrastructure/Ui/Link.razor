@@ -1,0 +1,30 @@
+﻿@if (IsDisabled)
+{
+    <div class="form-group text-center">
+        <label for=@Property class="form-label">@Label</label>
+        <div id=@Property>@Value</div>
+    </div>
+}
+else
+{
+    <div class="form-group text-center">
+        <label for=@Property class="form-label">@Label</label>
+        <div>
+            <a id=@Property href=@Href target="_blank" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">@Value</a>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter, EditorRequired]
+    public string Property { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = default!;
+    [Parameter]
+    public string Value { get; set; } = default!;
+    [Parameter]
+    public string Href { get; set; } = default!;
+    [Parameter]
+    public bool IsDisabled { get; set; }
+}

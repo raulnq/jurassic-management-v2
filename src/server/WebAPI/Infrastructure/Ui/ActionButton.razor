@@ -1,0 +1,69 @@
+﻿@if (IsDisabled)
+{
+    <button type="button"
+            hx-get=@HtmxProps.Endpoint
+            hx-target=@HtmxProps.Target
+            hx-swap=@HtmxProps.Swap
+            class="@Icon btn btn-primary"
+            disabled>
+        @Text
+    </button>
+}
+else
+{
+    if (string.IsNullOrEmpty(HtmxProps.HttpMethod))
+    {
+        <button type="button"
+                hx-get=@HtmxProps.Endpoint
+                hx-target=@HtmxProps.Target
+                hx-swap=@HtmxProps.Swap
+                hx-confirm=@HtmxProps.Confirm
+                hx-select=@HtmxProps.Select
+                hx-vals=@HtmxProps.Vals
+                class="@Icon btn btn-primary">
+            @Text
+        </button>
+    }
+    else
+    {
+        switch (HtmxProps.HttpMethod)
+        {
+            case "POST":
+                <div hx-ext="path-params">
+                    <button type="button"
+                            hx-post=@HtmxProps.Endpoint
+                            hx-ext="json-enc"
+                            hx-target=@HtmxProps.Target
+                            hx-select=@HtmxProps.Select
+                            hx-swap=@HtmxProps.Swap
+                            hx-confirm=@HtmxProps.Confirm
+                            hx-vals=@HtmxProps.Vals
+                            hx-indicator="#action-spinner-@Id"
+                            hx-disabled-elt="#action-button-@Id"
+                            class="@Icon btn btn-primary"
+                            id="action-button-@Id">
+                        @Text
+                        <span id="action-spinner-@Id" class="spinner-border spinner-border-sm htmx-indicator" aria-hidden="true" />
+                    </button>
+                </div>
+                break;
+        }
+
+    }
+
+
+
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public string Text { get; set; } = default!;
+    [Parameter]
+    public string Id { get; set; } = default!;
+    [Parameter]
+    public string Icon { get; set; } = string.Empty;
+    [Parameter, EditorRequired]
+    public HtmxProps HtmxProps { get; set; } = default!;
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+}

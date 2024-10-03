@@ -1,0 +1,160 @@
+﻿@using WebAPI.MoneyExchanges
+@using WebAPI.Proformas;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using global::Infrastructure
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.EditTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}")>
+    <MenuItems>
+        <MenuItem Text=@Endpoints.UploadTitle
+                  IsDisabled=@(Result.Status==PayrollPaymentStatus.Canceled.ToString())
+                  HtmxProps=@(new HtmxProps(Endpoints.Upload, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"payrollPaymentId":"{{Result.PayrollPaymentId}}"}"""}) />
+        <MenuItem Text=@Endpoints.PayTitle
+                  IsDisabled=@(Result.Status!=PayrollPaymentStatus.Pending.ToString())
+                  HtmxProps=@(new HtmxProps(Endpoints.Pay, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"payrollPaymentId":"{{Result.PayrollPaymentId}}"}"""}) />
+        <MenuItem Text=@Endpoints.PayAfpTitle
+                  IsDisabled=@(Result.Status!=PayrollPaymentStatus.Paid.ToString())
+                  HtmxProps=@(new HtmxProps(Endpoints.PayAfp, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"payrollPaymentId":"{{Result.PayrollPaymentId}}"}"""}) />
+        <MenuItem HtmxProps=@(new HtmxProps(Endpoints.Cancel, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"payrollPaymentId":"{{Result.PayrollPaymentId}}"}"""})
+                  IsDisabled=@(Result.Status !=PayrollPaymentStatus.Pending.ToString())
+                  Text=@Endpoints.CancelTitle />
+        <MenuItem HtmxProps=@(new HtmxProps(Endpoints.ExcludeFromTaxes, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"payrollPaymentId":"{{Result.PayrollPaymentId}}"}"""})
+                  IsDisabled=@(Result.Status !=PayrollPaymentStatus.Pending.ToString() || Result.ExcludeFromTaxes==true)
+                  Text=@Endpoints.ExcludeFromTaxesTitle />
+        <MenuItem HtmxProps=@(new HtmxProps(Endpoints.IncludeFromTaxes, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"payrollPaymentId":"{{Result.PayrollPaymentId}}"}"""})
+                  IsDisabled=@(Result.Status !=PayrollPaymentStatus.Pending.ToString() || Result.ExcludeFromTaxes==false)
+                  Text=@Endpoints.IncludeFromTaxesTitle />
+    </MenuItems>
+</Breadcrumbs>
+<Toolbar>
+    <Actions>
+        <Divider />
+        <Link Property=@nameof(GetPayrollPayment.Result.DocumentUrl)
+              Value="View"
+              Href=@Result.DocumentUrl
+              IsDisabled=@(string.IsNullOrEmpty(Result.DocumentUrl))
+              Label="PDF" />
+        <Divider />
+        <Text Property=@nameof(GetPayrollPayment.Result.Status)
+              Value=@Result.Status
+              Label="Status" />
+        <Divider />
+        <Text Property=@nameof(GetPayrollPayment.Result.ExcludeFromTaxes)
+              Value=@Result.ExcludeFromTaxes
+              Label="Exclude" />
+        <Divider />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(Endpoints.Edit, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"payrollPaymentId":"{{Result.PayrollPaymentId}}"}"""})
+              IsDisabled=@(Result.Status !=PayrollPaymentStatus.Pending.ToString())>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col-3">
+                            <SelectInput Property=@nameof(GetPayrollPayment.Result.CollaboratorName)
+                                         Label="Collaborator"
+                                         TKey=Guid
+                                         Value=@Result.CollaboratorName
+                                         Readonly=true />
+                        </div>
+                        <div class="col-3">
+                            <SelectInput Property=@nameof(GetPayrollPayment.Result.Currency)
+                                         Label="Currency"
+                                         Value=@Result.Currency
+                                         Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         Readonly=@(Result.Status !=PayrollPaymentStatus.Pending.ToString()) />
+                        </div>
+                        <div class="col-3">
+                            <SelectInput Property="MoneyExchangeId"
+                                         Label="Exchange Rate"
+                                         Value=@Result.MoneyExchangeId.ToString()
+                                         Source=@MoneyExchanges.ToDictionary(c=>c.MoneyExchangeId.ToString(), c=>$"{c.Rate.ToRateFormat()}({c.IssuedAt.ToListFormat()})")
+                                         Readonly=@(Result.Status !=PayrollPaymentStatus.Pending.ToString()) />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(GetPayrollPayment.Result.ITF)
+                                         Label="ITF"
+                                         Prefix="$"
+                                         Value=@Result.ITF
+                                         Readonly=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(GetPayrollPayment.Result.NetSalary)
+                                         Label="Net Salary"
+                                         Prefix="$"
+                                         Value=@Result.NetSalary
+                                         Step=0.01m
+                                         Readonly=@(Result.Status !=PayrollPaymentStatus.Pending.ToString()) />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(GetPayrollPayment.Result.Afp)
+                                         Label="AFP"
+                                         Prefix="+$"
+                                         Value=@Result.Afp
+                                         Step=0.01m
+                                         Readonly=@(Result.Status !=PayrollPaymentStatus.Pending.ToString()) />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(GetPayrollPayment.Result.GrossSalary)
+                                         Label="Gross Salary"
+                                         Prefix="=$"
+                                         Value=@Result.GrossSalary
+                                         Readonly=true />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(GetPayrollPayment.Result.Commission)
+                                         Label="Commission"
+                                         Prefix="$"
+                                         Step=0.01m
+                                         Value=@Result.Commission
+                                         Readonly=@(Result.Status !=PayrollPaymentStatus.Pending.ToString()) />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-3">
+                            <DateInput Property=@nameof(GetPayrollPayment.Result.CreatedAt)
+                                       Label="Created at"
+                                       Value=@Result.CreatedAt
+                                       Readonly=true />
+                        </div>
+                        <div class="col-3">
+                            <DateInput Property=@nameof(GetPayrollPayment.Result.PaidAt)
+                                       Label="Paid at"
+                                       Value=@Result.PaidAt
+                                       Readonly=true />
+                        </div>
+                        <div class="col-3">
+                            <DateInput Property=@nameof(GetPayrollPayment.Result.AfpPaidAt)
+                                       Label="AFP paid at"
+                                       Value=@Result.AfpPaidAt
+                                       Readonly=true />
+                        </div>
+                        <div class="col-3">
+                            <DateInput Property=@nameof(GetPayrollPayment.Result.CanceledAt)
+                                       Label="Canceled at"
+                                       Value=@Result.CanceledAt
+                                       Readonly=true />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public GetPayrollPayment.Result Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public IEnumerable<MoneyExchange> MoneyExchanges { get; set; } = default!;
+}

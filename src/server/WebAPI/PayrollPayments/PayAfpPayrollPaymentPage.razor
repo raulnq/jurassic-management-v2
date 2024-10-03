@@ -1,0 +1,35 @@
+﻿@using WebAPI.Clients;
+@using WebAPI.CollaboratorRoles
+@using WebAPI.Collaborators
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.PayAfp, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"payrollPaymentId":"{{PayrollPaymentId}}"}"""})
+           Title=@Endpoints.PayAfpTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <DateInput Property=@nameof(PayAfpPayrollPayment.Command.PaidAt)
+                               Label="Date"
+                               Required=true />
+                </div>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(PayAfpPayrollPayment.Command.Afp)
+                                 Label="AFP"
+                                 Prefix="+$"
+                                 Value=@Afp
+                                 Step=0.01m />
+                </div>
+
+            </Content>
+        </FormRow>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid PayrollPaymentId { get; set; } = default;
+    [Parameter, EditorRequired]
+    public decimal Afp { get; set; } = default;
+}

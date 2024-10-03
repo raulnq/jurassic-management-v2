@@ -1,0 +1,67 @@
+﻿@using WebAPI.Clients;
+@using WebAPI.CollaboratorRoles
+@using WebAPI.Collaborators
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(WebAPI.Proformas.Endpoints.AddWorkItem,$"#{ListProformaWeekWorkItemsPage.List}",Swap.OuterHTML,$"#{ListProformaWeekWorkItemsPage.List}"){Vals=$$"""{"proformaId":"{{ProformaId}}", "week":"{{Week}}"}"""})
+           Title=@Endpoints.AddWorkItemTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col">
+                    <SelectInput Property=@(nameof(AddWorkItem.Command.CollaboratorRoleId))
+                                 Label="Collaborator Role"
+                                 Source=@CollaboratorRoles.ToDictionary(c=>c.CollaboratorRoleId, c=>c.Name)
+                                 Required=true />
+                </div>
+            </Content>
+        </FormRow>
+        <FormRow>
+            <Content>
+                <div class="col">
+                    <SelectInput Property=@(nameof(AddWorkItem.Command.CollaboratorId))
+                                 Label="Collaborator"
+                                 Source=@Collaborators.ToDictionary(c=>c.CollaboratorId, c=>c.Name)
+                                 Required=true />
+                </div>
+            </Content>
+        </FormRow>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(AddWorkItem.Command.Hours)
+                                 Label="Hours"
+                                 Placeholder="Enter hours"
+                                 Sufix="hr"
+                                 Min=0
+                                 Step=0.0001m
+                                 Value="0"
+                                 Required=true />
+                </div>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(AddWorkItem.Command.FreeHours)
+                                 Label="Free Hours"
+                                 Placeholder="Enter free hours"
+                                 Sufix="hr"
+                                 Min=0
+                                 Step=0.0001m
+                                 Value="0"
+                                 Required=true />
+                </div>
+            </Content>
+        </FormRow>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid ProformaId { get; set; } = default;
+    [Parameter, EditorRequired]
+    public int Week { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public IEnumerable<CollaboratorRole> CollaboratorRoles { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public IEnumerable<Collaborator> Collaborators { get; set; } = default!;
+
+}

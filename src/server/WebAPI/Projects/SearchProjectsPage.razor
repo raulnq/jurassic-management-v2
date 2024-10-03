@@ -1,0 +1,13 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<option value="" selected></option>
+@foreach (var item in Result)
+{
+    <option value=@item.ProjectId>@item.Name</option>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public List<SearchProjects.Result> Result { get; set; } = default!;
+}

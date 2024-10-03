@@ -1,0 +1,15 @@
+﻿<header class="navbar navbar-expand bg-white fixed-top border-bottom px-4 z-2" style="height: 3.875rem;">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <span>@Text</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+@code {
+    [Parameter, EditorRequired]
+    public string Text { get; set; } = default!;
+}

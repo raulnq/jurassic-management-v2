@@ -1,0 +1,26 @@
+﻿@using WebAPI.Clients;
+@using WebAPI.CollaboratorRoles
+@using WebAPI.Collaborators
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Pay, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"payrollPaymentId":"{{PayrollPaymentId}}"}"""})
+           Title=@Endpoints.PayTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col">
+                    <DateInput Property=@nameof(PayPayrollPayment.Command.PaidAt)
+                               Label="Date"
+                               Required=true />
+                </div>
+
+            </Content>
+        </FormRow>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid PayrollPaymentId { get; set; } = default;
+}

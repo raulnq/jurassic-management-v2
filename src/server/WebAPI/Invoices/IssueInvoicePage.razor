@@ -1,0 +1,53 @@
+﻿@using WebAPI.Clients;
+@using WebAPI.CollaboratorRoles
+@using WebAPI.Collaborators
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Issue, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"invoiceId":"{{InvoiceId}}"}"""})
+           Title=@Endpoints.IssueTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-3">
+                    <TextInput Property=@nameof(IssueInvoice.Command.Number)
+                               Label="Number"
+                               Placeholder="Enter Number"
+                               MaxLenght=50
+                               Required=true>
+                    </TextInput>
+                </div>
+                <div class="col-3">
+                    <NumberInput Property=@nameof(IssueInvoice.Command.SubTotal)
+                                 Label="Sub Total"
+                                 Placeholder="Enter sub total"
+                                 Min=0.01m
+                                 Step=0.001m
+                                 Value="0"
+                                 Required=true />
+                </div>
+                <div class="col-3">
+                    <NumberInput Property=@nameof(IssueInvoice.Command.ExchangeRate)
+                                 Label="Exchange Rate"
+                                 Placeholder="Exchange Rate"
+                                 Min=1m
+                                 Step=0.001m
+                                 Value="1"
+                                 Required=true />
+                </div>
+                <div class="col-3">
+                    <DateInput Property=@nameof(IssueInvoice.Command.IssuedAt)
+                               Label="Date"
+                               Required=true />
+                </div>
+
+
+            </Content>
+        </FormRow>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid InvoiceId { get; set; } = default;
+}

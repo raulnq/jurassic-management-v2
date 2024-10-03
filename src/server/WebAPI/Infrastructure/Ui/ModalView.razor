@@ -1,0 +1,20 @@
+﻿<div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title">@Title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        @Content
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+</div>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment? Content { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = default!;
+}

@@ -1,0 +1,128 @@
+﻿@using WebAPI.Clients
+@using WebAPI.InvoiceToCollectionProcesses
+@using WebAPI.Invoices
+@using WebAPI.ProformaToInvoiceProcesses
+@using WebAPI.Proformas;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.ViewTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}")>
+    <MenuItems>
+        <MenuItem Text=@Endpoints.ConfirmTitle
+                  IsDisabled=@(Result.Status!=CollectionStatus.Pending.ToString())
+                  HtmxProps=@(new HtmxProps(Endpoints.Confirm, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"collectionId":"{{Result.CollectionId}}"}"""}) />
+        <MenuItem HtmxProps=@(new HtmxProps(Endpoints.Cancel, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"collectionId":"{{Result.CollectionId}}"}"""})
+                  IsDisabled=@(Result.Status !=CollectionStatus.Pending.ToString())
+                  Text=@Endpoints.CancelTitle />
+        <MenuItem Text="Upload document"
+                  HtmxProps=@(new HtmxProps(Endpoints.Upload, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"collectionId":"{{Result.CollectionId}}"}"""}) />
+    </MenuItems>
+</Breadcrumbs>
+<Toolbar>
+    <Actions>
+        <Divider />
+        <Text Property=@nameof(GetCollection.Result.Status)
+              Value=@Result.Status
+              Label="Status" />
+        <Divider />
+        <Link Property=@nameof(GetCollection.Result.DocumentUrl)
+              Value="View"
+              Href=@Result.DocumentUrl
+              IsDisabled=@(string.IsNullOrEmpty(Result.DocumentUrl))
+              Label="PDF" />
+        <Divider />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-4">
+                    <SelectInput Property=@nameof(GetCollection.Result.ClientName)
+                                 Label="Client"
+                                 TKey=Guid
+                                 Value=@Result.ClientName
+                                 Readonly=true />
+                </div>
+                <div class="col-4">
+                    <SelectInput Property=@nameof(GetCollection.Result.Currency)
+                                 Label="Currency"
+                                 TKey=int
+                                 Value=@Result.Currency
+                                 Readonly=true />
+                </div>
+                <div class="col-4">
+                    <TextInput Property=@nameof(GetCollection.Result.Number)
+                               Label="Number"
+                               Value=@Result.Number
+                               Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+        <FormRow>
+            <Content>
+                <div class="col-3">
+                    <NumberInput Property=@nameof(GetCollection.Result.Total)
+                                 Label="Total"
+                                 Prefix="$"
+                                 Value=@Result.Total
+                                 Readonly=true />
+                </div>
+                <div class="col-3">
+                    <NumberInput Property=@nameof(GetCollection.Result.Commission)
+                                 Label="Commission"
+                                 Prefix="$"
+                                 Value=@Result.Commission
+                                 Readonly=true />
+                </div>
+                <div class="col-3">
+                    <NumberInput Property=@nameof(GetCollection.Result.ITF)
+                                 Label="ITF"
+                                 Prefix="$"
+                                 Value=@Result.ITF
+                                 Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+
+        <FormRow>
+            <Content>
+                <div class="col-4">
+                    <DateInput Property=@nameof(GetCollection.Result.CreatedAt)
+                               Label="Created at"
+                               Value=@Result.CreatedAt
+                               Readonly=true />
+                </div>
+                <div class="col-4">
+                    <DateInput Property=@nameof(GetCollection.Result.ConfirmedAt)
+                               Label="Confirmed at"
+                               Value=@Result.ConfirmedAt
+                               Readonly=true />
+                </div>
+                <div class="col-4">
+                    <DateInput Property=@nameof(GetCollection.Result.CanceledAt)
+                               Label="Canceled at"
+                               Value=@Result.CanceledAt
+                               Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+    </Content>
+</Section>
+<Section Title="Invoices">
+    <Content>
+        <ListInvoiceToCollectionProcessItemsPage Query=@ListInvoiceToCollectionProcessItemsQuery
+                                                 Result=@ListInvoiceToCollectionProcessItemsResult />
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public GetCollection.Result Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListResults<ListInvoiceToCollectionProcessItems.Result> ListInvoiceToCollectionProcessItemsResult { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListInvoiceToCollectionProcessItems.Query ListInvoiceToCollectionProcessItemsQuery { get; set; } = default!;
+}

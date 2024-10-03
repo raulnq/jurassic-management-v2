@@ -1,0 +1,18 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Add, $"#{ListProjectsPage.List}", Swap.OuterHTML){Vals=$$"""{"clientId":"{{ClientId}}"}"""})
+           Title=@Endpoints.AddTitle>
+    <Content>
+        <TextInput Property=@nameof(AddProject.Command.Name)
+                   Label="Name"
+                   Placeholder="Enter name"
+                   MaxLenght=100
+                   Required=true />
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid ClientId { get; set; } = default!;
+}

@@ -1,0 +1,53 @@
+﻿@using WebAPI.Clients
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.Proformas
+
+<Heading Text=@Invoices.Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Invoices.Endpoints.ListTitle,WebAPI.Invoices.Endpoints.List.AddListParameters()), new(Endpoints.RegisterTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}"))>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <SelectInput Property=@nameof(StartProformaToInvoiceProcess.Command.ClientId)
+                                         Label="Client"
+                                         HtmxProps=@(new HtmxProps(@WebAPI.Proformas.Endpoints.SearchNotAddedToInvoice, $"#{nameof(StartProformaToInvoiceProcess.Command.ProformaId)}"){Include=$"#{nameof(StartProformaToInvoiceProcess.Command.Currency)}"})
+                                         Source=@Clients.ToDictionary(c=>c.ClientId, c=>c.Name)
+                                         Required=true>
+                            </SelectInput>
+                        </div>
+                        <div class="col-6">
+                            <SelectInput Property=@nameof(StartProformaToInvoiceProcess.Command.Currency)
+                                         Label="Currency"
+                                         Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         HtmxProps=@(new HtmxProps(@WebAPI.Proformas.Endpoints.SearchNotAddedToInvoice, $"#{nameof(StartProformaToInvoiceProcess.Command.ProformaId)}"){Include=$"#{nameof(StartProformaToInvoiceProcess.Command.ClientId)}"})
+                                         Required=true>
+                            </SelectInput>
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col">
+                            <SelectInput Property=@(nameof(StartProformaToInvoiceProcess.Command.ProformaId))
+                                         Label="Proformas"
+                                         Required=true
+                                         Multiple=true
+                                         TKey=Guid>
+                            </SelectInput>
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<Client> Clients { get; set; } = default!;
+}

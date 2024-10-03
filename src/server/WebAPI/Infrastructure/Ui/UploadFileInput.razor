@@ -1,0 +1,21 @@
+﻿<div class="form-group">
+    <label for=@Property class="form-label">@Label</label>
+    <input type="file"
+           class="form-control"
+           id=@Property
+           name=@Property
+           accept=@Accept
+           required />
+</div>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public string Property { get; set; } = default!;
+    [Parameter]
+    public string Label { get; set; } = default!;
+    [Parameter]
+    public string Accept { get; set; } = default!;
+    [Parameter]
+    public bool Required { get; set; } = default!;
+}

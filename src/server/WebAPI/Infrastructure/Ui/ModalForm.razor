@@ -1,0 +1,68 @@
+﻿@if (HtmxProps.Encoding == "multipart/form-data")
+{
+    <div class="modal-content" hx-ext="path-params">
+        <form hx-post=@HtmxProps.Endpoint
+              hx-target=@HtmxProps.Target
+              hx-swap=@HtmxProps.Swap
+              hx-indicator="#modal-form-spinner"
+              hx-disabled-elt="#modal-form-button"
+              hx-encoding=@HtmxProps.Encoding
+              hx-vals=@HtmxProps.Vals
+              hx-select=@HtmxProps.Select>
+            <div class="modal-header">
+                <h3 class="modal-title">@Title</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @Content
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="modal-form-button" type="submit" class="btn btn-primary">
+                    <span>Save Changes</span>
+                    <span id="modal-form-spinner" class="spinner-border spinner-border-sm htmx-indicator" aria-hidden="true" />
+                </button>
+            </div>
+        </form>
+    </div>
+
+}
+else
+{
+    <div class="modal-content" hx-ext="path-params">
+        <form hx-post=@HtmxProps.Endpoint
+              hx-target=@HtmxProps.Target
+              hx-swap=@HtmxProps.Swap
+              hx-ext="json-enc"
+              hx-vals=@HtmxProps.Vals
+              hx-indicator="#modal-form-spinner"
+              hx-disabled-elt="#modal-form-button"
+              hx-select=@HtmxProps.Select>
+            <div class="modal-header">
+                <h1 class="modal-title">@Title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @Content
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="modal-form-button" type="submit" class="btn btn-primary">
+                    <span>Save Changes</span>
+                    <span id="modal-form-spinner" class="spinner-border spinner-border-sm htmx-indicator" aria-hidden="true" />
+                </button>
+            </div>
+        </form>
+    </div>
+
+}
+
+
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment? Content { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public HtmxProps HtmxProps { get; set; } = default!;
+}

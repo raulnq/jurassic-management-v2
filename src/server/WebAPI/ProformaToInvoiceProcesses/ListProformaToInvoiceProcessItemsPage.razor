@@ -1,0 +1,43 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.Proformas;
+@using global::Infrastructure
+
+<div id=@List>
+    <DataTable TResult=ListProformaToInvoiceProcessItems.Result
+               Result=@Result.Items
+               Context="item">
+        <TableHeader>
+            <th>Project</th>
+            <th>Proforma Number</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Proforma Currency</th>
+            <th class="text-end">SubTotal</th>
+            <th class="text-end">Commission</th>
+            <th class="text-end">Total</th>
+        </TableHeader>
+        <RowTemplate>
+            <td>@item.ProjectName</td>
+            <td>@item.ProformaNumber</td>
+            <td>@item.ProformaStart.ToListFormat()</td>
+            <td>@item.ProformaEnd.ToListFormat()</td>
+            <td>@item.ProformaCurrency</td>
+            <td class="text-end">@item.ProformaSubTotal.ToMoneyFormat()</td>
+            <td class="text-end">@item.ProformaCommission.ToMoneyFormat()</td>
+            <td class="text-end">@item.ProformaTotal.ToMoneyFormat()</td>
+        </RowTemplate>
+    </DataTable>
+    <Pagination Query=@Query
+                Result=@Result
+                HtmxProps=@(new HtmxProps(Endpoints.ListItems, $"#{List}", Swap.OuterHTML){Vals=$$"""{"invoiceId":"{{Query.InvoiceId}}"}"""}) />
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListProformaToInvoiceProcessItems.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListProformaToInvoiceProcessItems.Query Query { get; set; } = default!;
+
+    public const string List = "process-items-list-target";
+}

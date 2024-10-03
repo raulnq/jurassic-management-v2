@@ -1,0 +1,83 @@
+﻿@using WebAPI.CollaboratorRoles;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.Proformas
+@using global::Infrastructure
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new []{new Breadcrumbs.Link(Endpoints.ListTitle)})
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Section>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-4">
+                    <SelectFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"){ Include=$"#{nameof(ListBankBalance.Query.StringStart)}, #{nameof(ListBankBalance.Query.StringEnd)}"})
+                                  Label="Status"
+                                  Property=@(nameof(ListBankBalance.Query.Currency))
+                                  Query=@Query
+                                  EmptyLabel="None"
+                                  Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString())) />
+                </div>
+                <div class="col-4">
+                    <DateFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"){ Include=$"#{nameof(ListBankBalance.Query.Currency)}, #{nameof(ListBankBalance.Query.StringEnd)}"})
+                                Property=@(nameof(ListBankBalance.Query.StringStart))
+                                Query=@Query />
+                </div>
+                <div class="col-4">
+                    <DateFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"){ Include=$"#{nameof(ListBankBalance.Query.Currency)}, #{nameof(ListBankBalance.Query.StringStart)}"})
+                                Property=@(nameof(ListBankBalance.Query.StringEnd))
+                                Query=@Query />
+                </div>
+            </Content>
+        </FormRow>
+        <div id=@List>
+            <DataTable TResult=ListBankBalance.Result
+                       Result=@Result
+                       Context="item">
+                <TableHeader>
+                    <th>IssuedAt</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th class="text-end">SubTotal</th>
+                    <th class="text-end">Taxes</th>
+                    <th class="text-end">Total</th>
+                    <th class="text-end">ITF</th>
+                    <th class="text-end">Balance</th>
+                </TableHeader>
+                <RowTemplate>
+                    <td>@item.IssuedAt.ToListFormat()</td>
+                    <td>@item.Type</td>
+                    <td>@item.Description</td>
+                    <td class="text-end">@item.Currency @(item.SubTotal * item.Sign)</td>
+                    <td class="text-end">@(item.Taxes * item.Sign)</td>
+                    <td class="text-end">@(item.Total * item.Sign)</td>
+                    <td class="text-end">@(item.ITF * -1)</td>
+                    <td class="text-end">@item.Balance</td>
+                </RowTemplate>
+                <TableFooter>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th>Balance</th>
+                    <td class="text-end">@EndBalance</td>
+                </TableFooter>
+            </DataTable>
+        </div>
+    </Content>
+</Section>
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<ListBankBalance.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListBankBalance.Query Query { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public decimal StartBalance { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public decimal EndBalance { get; set; } = default!;
+
+    public const string List = "bank-balance-list-target";
+}

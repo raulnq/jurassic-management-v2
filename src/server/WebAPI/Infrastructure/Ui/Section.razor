@@ -1,0 +1,16 @@
+﻿<div class="card mb-4">
+    <div class="card-body">
+        @if (!string.IsNullOrEmpty(Title))
+        {
+            <h3>@Title</h3>
+        }
+        @Content
+    </div>
+</div>
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment? Content { get; set; } = default!;
+    [Parameter]
+    public string Title { get; set; } = default!;
+}
+

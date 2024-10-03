@@ -1,0 +1,26 @@
+﻿@using WebAPI.Clients;
+@using WebAPI.CollaboratorRoles
+@using WebAPI.Collaborators
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Upload, $"#{WebAPI.Users.MainPage.Workspace}")
+           { Encoding="multipart/form-data", Vals=$$"""{"payrollPaymentId":"{{PayrollPaymentId}}"}"""})
+           Title=@Endpoints.UploadTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col">
+                    <UploadFileInput Property="File"
+                                     Accept=".pdf"
+                                     Required=true />
+                </div>
+            </Content>
+        </FormRow>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid PayrollPaymentId { get; set; } = default;
+}

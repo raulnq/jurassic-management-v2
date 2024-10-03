@@ -1,0 +1,1 @@
+﻿ALTER TABLE $schema$.[CollaboratorPayments] ADD [ExchangeRate] decimal(19,4) NOT NULL CONSTRAINT CollaboratorPayments_ExchangeRate_Default default 1;

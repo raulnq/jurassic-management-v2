@@ -1,0 +1,45 @@
+﻿@if (string.IsNullOrEmpty(HtmxProps.HttpMethod))
+{
+    <li>
+        <a class="dropdown-item @GetClass()"
+           href="#"
+           hx-get=@HtmxProps.Endpoint
+           hx-target=@HtmxProps.Target
+           hx-confirm=@HtmxProps.Confirm
+           hx-vals=@HtmxProps.Vals
+           hx-swap=@HtmxProps.Swap>@Text</a>
+    </li>
+}
+else
+{
+    switch (HtmxProps.HttpMethod)
+    {
+        case "POST":
+            <li>
+                <a class="dropdown-item @GetClass()"
+                   href="#"
+                   hx-post=@HtmxProps.Endpoint
+                   hx-target=@HtmxProps.Target
+                   hx-confirm=@HtmxProps.Confirm
+                   hx-vals=@HtmxProps.Vals
+                   hx-swap=@HtmxProps.Swap>@Text</a>
+            </li>
+            break;
+    }
+}
+
+@code {
+
+    [Parameter, EditorRequired]
+    public string Text { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public HtmxProps HtmxProps { get; set; } = default!;
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+    public string GetClass()
+    {
+        if (IsDisabled)
+            return "disabled";
+        return string.Empty;
+    }
+}

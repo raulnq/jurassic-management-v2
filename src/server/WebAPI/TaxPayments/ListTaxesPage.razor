@@ -1,0 +1,45 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.Projects;
+
+<div id=@List>
+    <DataTable TResult=TaxPaymentItem
+               Result=@Items
+               Context="item">
+        <TableHeader>
+            <th></th>
+            <th>Type</th>
+            <th>Amount</th>
+        </TableHeader>
+        <RowTemplate>
+            <RowToolbar>
+                <Actions>
+                    <ActionLink HtmxProps=@(new HtmxProps(Endpoints.Remove, $"#{List}",Swap.OuterHTML, $"#{List}"){ Confirm = "Are you sure?", HttpMethod="DELETE", Vals=$$"""{"taxPaymentId":"{{item.TaxPaymentId}}", "taxPaymentItemId":"{{item.TaxPaymentItemId}}"}"""})
+                                IsDisabled=@ReadOnly
+                                Icon=@Icons.Delete />
+                    <ActionLink HtmxProps=@(new HtmxProps(Endpoints.Edit, $"#{WebAPI.Users.MainPage.Dialog}") {Vals=$$"""{"taxPaymentId":"{{item.TaxPaymentId}}", "taxPaymentItemId":"{{item.TaxPaymentItemId}}"}"""})
+                                IsDisabled=@ReadOnly
+                                Icon=@Icons.Edit />
+                </Actions>
+            </RowToolbar>
+            <td>@item.Type</td>
+            <td>@item.Amount</td>
+        </RowTemplate>
+    </DataTable>
+</div>
+<div id=@GetTaxPaymentPage.Totals hx-swap-oob="true" class="col-3">
+    <NumberInput Property=@nameof(TaxPayment.Total)
+                 Label="Total"
+                 Prefix="$"
+                 Value=@Total
+                 Readonly=true />
+</div>
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<TaxPaymentItem> Items { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public decimal Total { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public bool ReadOnly { get; set; } = default;
+    public const string List = "taxes-list-target";
+}

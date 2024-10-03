@@ -1,0 +1,1 @@
+﻿ALTER TABLE $schema$.[Invoices] ADD [ExchangeRate] decimal(19,4) NOT NULL CONSTRAINT Invoices_ExchangeRate_Default default 1;

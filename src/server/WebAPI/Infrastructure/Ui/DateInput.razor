@@ -1,0 +1,47 @@
+﻿<div class="form-group">
+    <label for=@Property class="form-label">@Label</label>
+    @if (@Readonly)
+    {
+        <input type="text"
+               class="form-control"
+               id=@Property
+               name=@Property
+               value=@Value
+               readonly
+               disabled />
+    }
+    else
+    {
+        @if (Required)
+        {
+            <input type="date"
+                   class="form-control"
+                   id=@Property
+                   name=@Property
+                   value=@Value
+                   required />
+        }
+        else
+        {
+            <input type="date"
+                   class="form-control"
+                   id=@Property
+                   name=@Property
+                   value=@Value />
+        }
+    }
+</div>
+
+
+@code {
+    [Parameter, EditorRequired]
+    public string Property { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = default!;
+    [Parameter]
+    public object Value { get; set; } = default!;
+    [Parameter]
+    public bool Required { get; set; } = default!;
+    [Parameter]
+    public bool Readonly { get; set; } = default!;
+}

@@ -1,0 +1,51 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.Proformas;
+@using global::Infrastructure
+
+<div id=@List>
+    <DataTable TResult=ListProformaToCollaboratorPaymentProcessItems.Result
+               Result=@Result.Items
+               Context="item">
+        <TableHeader>
+            <th>Project</th>
+            <th>Proforma Number</th>
+            <th>Week</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Hours</th>
+            <th>Free Hours</th>
+            <th>Proforma Currency</th>
+            <th class="text-end">Fee Amount</th>
+            <th class="text-end">SubTotal</th>
+            <th class="text-end">Profit Percentage</th>
+            <th class="text-end">Profit Amount</th>
+        </TableHeader>
+        <RowTemplate>
+            <td>@item.ProjectName</td>
+            <td>@item.ProformaNumber</td>
+            <td>@item.Week</td>
+            <td>@item.ProformaWeekStart.ToListFormat()</td>
+            <td>@item.ProformaWeekEnd.ToListFormat()</td>
+            <td>@item.Hours</td>
+            <td>@item.FreeHours</td>
+            <td>@item.ProformaCurrency</td>
+            <td class="text-end">@item.FeeAmount.ToMoneyFormat()</td>
+            <td class="text-end">@item.SubTotal.ToMoneyFormat()</td>
+            <td class="text-end">@item.ProfitPercentage.ToPercentageFormat()</td>
+            <td class="text-end">@item.ProfitAmount.ToMoneyFormat()</td>
+        </RowTemplate>
+    </DataTable>
+    <Pagination Query=@Query
+                Result=@Result
+                HtmxProps=@(new HtmxProps(Endpoints.ListItems, $"#{List}", Swap.OuterHTML){Vals=$$"""{"collaboratorPaymentId":"{{Query.CollaboratorPaymentId}}"}"""}) />
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListProformaToCollaboratorPaymentProcessItems.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListProformaToCollaboratorPaymentProcessItems.Query Query { get; set; } = default!;
+
+    public const string List = "process-items-list-target";
+}

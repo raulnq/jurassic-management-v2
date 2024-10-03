@@ -1,0 +1,57 @@
+﻿@using WebAPI.Infrastructure.SqlKata
+@typeparam TKey where TKey : notnull
+<select class="form-select"
+        name=@Property
+        id=@Property
+        hx-trigger="input changed"
+        hx-get="@HtmxProps.Endpoint.AddListParameters(1, @Query.PageSize,@Query.Ascending)"
+        hx-swap=@HtmxProps.Swap
+        hx-target=@HtmxProps.Target
+        hx-include=@HtmxProps.Include
+        hx-select=@HtmxProps.Select>
+
+    @if (string.IsNullOrEmpty(Value))
+    {
+        <option value=@(EmptyValue??"") selected>@EmptyLabel</option>
+
+        @foreach (var item in Source)
+        {
+            <option value=@item.Key>@item.Value</option>
+        }
+    }
+    else
+    {
+        @foreach (var item in Source)
+        {
+            @if (Value == item.Value)
+            {
+                <option value=@item.Key selected>@item.Value</option>
+            }
+            else
+            {
+                <option value=@item.Key>@item.Value</option>
+            }
+        }
+    }
+</select>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public string Property { get; set; } = default!;
+    [Parameter]
+    public string EmptyLabel { get; set; } = default!;
+    [Parameter]
+    public string Value { get; set; } = default!;
+    [Parameter]
+    public string EmptyValue { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListQuery Query { get; set; } = default!;
+    [Parameter]
+    public Dictionary<TKey, string> Source { get; set; } = new Dictionary<TKey, string>();
+
+    [Parameter, EditorRequired]
+    public HtmxProps HtmxProps { get; set; } = default!;
+}

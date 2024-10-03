@@ -1,0 +1,52 @@
+﻿@using WebAPI.Infrastructure.SqlKata
+@typeparam TResult
+
+<div class="table-responsive">
+    <table class="table">
+        <thead class="table-light">
+            <tr>@TableHeader</tr>
+        </thead>
+        <tbody>
+            @if (Result is null || Result.Count() == 0)
+            {
+                //TODO: Mostrar mensaje de no resultados
+            }
+            else
+            {
+                @foreach (var item in Result)
+                {
+                    @if (PreRenderRow)
+                    {
+                        <tr @key="@item">@RowTemplate(item)</tr>
+                    }
+                    else
+                    {
+                        @RowTemplate(item)
+                    }
+
+                }
+            }
+        </tbody>
+        @if (TableFooter != null)
+        {
+            <tfoot>
+                <tr>
+                    @TableFooter
+                </tr>
+            </tfoot>
+        }
+    </table>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<TResult> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public RenderFragment<TResult> RowTemplate { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public RenderFragment? TableHeader { get; set; } = default!;
+    [Parameter]
+    public bool PreRenderRow { get; set; } = true;
+    [Parameter]
+    public RenderFragment? TableFooter { get; set; } = default!;
+}

@@ -1,0 +1,134 @@
+﻿@using WebAPI.Clients
+@using WebAPI.JiraProfiles
+@using WebAPI.ProformaDocuments
+@using WebAPI.Proformas;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.ViewTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}")>
+    <MenuItems>
+        <MenuItem Text="Issue"
+                  IsDisabled=@(GetProformaResult.Status!=ProformaStatus.Pending.ToString())
+                  HtmxProps=@(new HtmxProps(Endpoints.Issue, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"proformaId":"{{GetProformaResult.ProformaId}}"}"""}) />
+        <MenuItem Text="Tracking"
+                  IsDisabled=@(GetProformaResult.Status!=ProformaStatus.Issued.ToString())
+                  HtmxProps=@(new HtmxProps(Endpoints.Track, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"proformaId":"{{GetProformaResult.ProformaId}}"}"""}) />
+        <MenuItem HtmxProps=@(new HtmxProps(Endpoints.Cancel, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"proformaId":"{{GetProformaResult.ProformaId}}"}"""})
+                  IsDisabled=@(GetProformaResult.Status !=ProformaStatus.Pending.ToString())
+                  Text="Cancel" />
+        <MenuItem HtmxProps=@(new HtmxProps(Endpoints.Open, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"proformaId":"{{GetProformaResult.ProformaId}}"}"""})
+                  IsDisabled=@(GetProformaResult.Status !=ProformaStatus.Issued.ToString())
+                  Text="Open" />
+        <MenuItem HtmxProps=@(new HtmxProps(Endpoints.Send, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"proformaId":"{{GetProformaResult.ProformaId}}"}"""})
+                  IsDisabled=@(GetProformaResult.Status !=ProformaStatus.Issued.ToString())
+                  Text="Send" />
+    </MenuItems>
+</Breadcrumbs>
+<Toolbar>
+    <Actions>
+        <Divider />
+        <Text Property=@nameof(GetProforma.Result.Number)
+              Value=@GetProformaResult.Number
+              Label="Number" />
+        <Divider />
+        <Link Property=@nameof(GetProformaDocument.Result.Url)
+              Value="View"
+              Href=@ProformaDocument?.Url
+              IsDisabled=@(ProformaDocument==null)
+              Label="PDF" />
+        <Divider />
+        <Text Property=@nameof(GetProforma.Result.Status)
+              Value=@GetProformaResult.Status
+              Label="Status" />
+        <Divider />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-4">
+                    <DateInput Property=@nameof(GetProforma.Result.Start)
+                               Label="Start date"
+                               Value=@GetProformaResult.Start
+                               Readonly=true />
+                </div>
+                <div class="col-4">
+                    <DateInput Property=@nameof(GetProforma.Result.End)
+                               Label="End date"
+                               Value=@GetProformaResult.End
+                               Readonly=true />
+                </div>
+                <div class="col-4">
+                    <SelectInput Property=@nameof(GetProforma.Result.Currency)
+                                 Label="Currency"
+                                 TKey=int
+                                 Value=@GetProformaResult.Currency
+                                 Readonly=true>
+                    </SelectInput>
+                </div>
+            </Content>
+        </FormRow>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <SelectInput Property=@nameof(GetProforma.Result.ClientName)
+                                 Label="Client"
+                                 TKey=Guid
+                                 Value=@GetProformaResult.ClientName
+                                 Readonly=true>
+                    </SelectInput>
+                </div>
+                <div class="col-6">
+                    <SelectInput Property=@nameof(GetProforma.Result.ProjectName)
+                                 Label="Project"
+                                 Value=@GetProformaResult.ProjectName
+                                 Readonly=true
+                                 TKey=Guid>
+                    </SelectInput>
+                </div>
+            </Content>
+        </FormRow>
+        <FormRow>
+            <Content>
+                <div class="col">
+                    <TextInput Property=@nameof(GetProforma.Result.Note)
+                               Label="Note"
+                               Value=@GetProformaResult.Note
+                               Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+        <div id=@Totals>
+            <TotalsSectionPage Total=@GetProformaResult.Total
+                               Commission=@GetProformaResult.Commission
+                               Discount=@GetProformaResult.Discount
+                               SubTotal=@GetProformaResult.SubTotal />
+        </div>
+    </Content>
+</Section>
+<Section Title=@Endpoints.WeekTitle>
+    <Content>
+        <ListProformaWeeksPage Query=@ListProformaWeeksQuery
+                               Result=@ListProformaWeeksResult />
+    </Content>
+</Section>
+<div id=@Collaborator>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public GetProforma.Result GetProformaResult { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListResults<ListProformaWeeks.Result> ListProformaWeeksResult { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListProformaWeeks.Query ListProformaWeeksQuery { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ProformaDocument? ProformaDocument { get; set; }
+
+    public const string Totals = "proforma-totals-target";
+
+    public const string Collaborator = "collaborator-target";
+}

@@ -1,0 +1,155 @@
+﻿@typeparam TKey where TKey : notnull
+<div class="form-group">
+    <label for=@Property class="form-label">@Label</label>
+    @if (Readonly)
+    {
+        var sourceValue = Value;
+        if (Source != null && Source.Any())
+        {
+            @foreach (var item in Source)
+            {
+                @if (Value == item.Key.ToString())
+                {
+                    sourceValue = item.Value;
+                }
+            }
+        }
+
+        <input type="text"
+               class="form-control"
+               id=@Property
+               name=@Property
+               value=@sourceValue
+               readonly disabled />
+    }
+    else
+    {
+        @if (Required)
+        {
+            @if (Multiple)
+            {
+                <select class="form-select"
+                        name=@Property
+                        id=@Property
+                        hx-get=@HtmxProps.Endpoint
+                        hx-target=@HtmxProps.Target
+                        hx-swap=@HtmxProps.Swap
+                        hx-vals=@HtmxProps.Vals
+                        hx-include=@HtmxProps.Include
+                        hx-trigger="input changed"
+                        hx-on:change=@HtmxProps.OnChange
+                        required
+                        multiple>
+
+                    @foreach (var item in Source)
+                    {
+                        <option value=@item.Key>@item.Value</option>
+                    }
+                </select>
+            }
+            else
+            {
+                <select class="form-select"
+                        name=@Property
+                        id=@Property
+                        hx-get=@HtmxProps.Endpoint
+                        hx-target=@HtmxProps.Target
+                        hx-swap=@HtmxProps.Swap
+                        hx-vals=@HtmxProps.Vals
+                        hx-include=@HtmxProps.Include
+                        hx-on:change=@HtmxProps.OnChange
+                        hx-trigger="input changed"
+                        required>
+                    @if (string.IsNullOrEmpty(Value))
+                    {
+                        <option value="" selected></option>
+                    }
+                    @foreach (var item in Source)
+                    {
+                        @if (Value == item.Key.ToString())
+                        {
+                            <option value=@item.Key selected>@item.Value</option>
+                        }
+                        else
+                        {
+                            <option value=@item.Key>@item.Value</option>
+                        }
+                    }
+                </select>
+            }
+        }
+        else
+        {
+            @if (Multiple)
+            {
+                <select class="form-select"
+                        name=@Property
+                        hx-get=@HtmxProps.Endpoint
+                        hx-target=@HtmxProps.Target
+                        hx-swap=@HtmxProps.Swap
+                        hx-trigger="input changed"
+                        hx-vals=@HtmxProps.Vals
+                        hx-include=@HtmxProps.Include
+                        hx-on:change=@HtmxProps.OnChange
+                        id=@Property
+                        multiple>
+
+                    @foreach (var item in Source)
+                    {
+                        <option value=@item.Key>@item.Value</option>
+                    }
+                </select>
+            }
+            else
+            {
+                <select class="form-select"
+                        name=@Property
+                        hx-get=@HtmxProps.Endpoint
+                        hx-target=@HtmxProps.Target
+                        hx-swap=@HtmxProps.Swap
+                        hx-include=@HtmxProps.Include
+                        hx-vals=@HtmxProps.Vals
+                        hx-on:change=@HtmxProps.OnChange
+                        hx-trigger="input changed"
+                        id=@Property>
+
+                    @if (string.IsNullOrEmpty(Value))
+                    {
+                        <option value="" selected></option>
+                    }
+                    @foreach (var item in Source)
+                    {
+                        @if (Value == item.Key.ToString())
+                        {
+                            <option value=@item.Key selected>@item.Value</option>
+                        }
+                        else
+                        {
+                            <option value=@item.Key>@item.Value</option>
+                        }
+                    }
+                </select>
+            }
+        }
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Property { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = default!;
+    [Parameter]
+    public bool Required { get; set; } = default!;
+    [Parameter]
+    public bool Multiple { get; set; } = default!;
+    [Parameter]
+    public bool Readonly { get; set; } = default!;
+    [Parameter]
+    public HtmxProps HtmxProps { get; set; } = new HtmxProps();
+    [Parameter]
+    public string Value { get; set; } = default!;
+    [Parameter]
+    public Dictionary<TKey, string> Source { get; set; } = new Dictionary<TKey, string>();
+
+}

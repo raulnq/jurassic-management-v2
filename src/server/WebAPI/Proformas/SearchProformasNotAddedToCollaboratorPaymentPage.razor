@@ -1,0 +1,13 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using global::Infrastructure
+
+@foreach (var item in Result)
+{
+    <option value="@item.ProformaId">Proforma @item.Number, week @item.Week from @item.Start.ToListFormat() to @item.End.ToListFormat()  with a subtotal of @item.Currency @item.SubTotal.ToMoneyFormat()</option>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public List<SearchProformasNotAddedToCollaboratorPayment.Result> Result { get; set; } = default!;
+}

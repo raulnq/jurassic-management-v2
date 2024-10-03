@@ -1,0 +1,82 @@
+﻿@using WebAPI.Collaborators
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.MoneyExchanges
+@using WebAPI.Proformas
+@using global::Infrastructure
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.RegisterTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}")>
+</Breadcrumbs>
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}"))>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <SelectInput Property=@(nameof(RegisterPayrollPayment.Command.CollaboratorId))
+                                         Label="Collaborator"
+                                         Source=@Collaborators.ToDictionary(c=>c.CollaboratorId, c=>c.Name)
+                                         Required=true />
+                        </div>
+                        <div class="col-3">
+                            <SelectInput Property=@nameof(RegisterPayrollPayment.Command.Currency)
+                                         Label="Currency"
+                                         Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         Required=true>
+                            </SelectInput>
+                        </div>
+                        <div class="col-3">
+                            <SelectInput Property="MoneyExchangeId"
+                                         Label="Exchange Rate"
+                                         Source=@MoneyExchanges.ToDictionary(c=>c.MoneyExchangeId.ToString(), c=>$"{c.Rate.ToRateFormat()}({c.IssuedAt.ToListFormat()})")
+                                         Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(RegisterPayrollPayment.Command.NetSalary)
+                                         Label="Net Salary"
+                                         Placeholder="Net salary"
+                                         Prefix="$"
+                                         Min=0.01m
+                                         Step=0.01m
+                                         Value="0"
+                                         Required=true />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(RegisterPayrollPayment.Command.Afp)
+                                         Label="AFP"
+                                         Placeholder="AFP"
+                                         Prefix="$"
+                                         Min=0
+                                         Step=0.01m
+                                         Value="0"
+                                         Required=true />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(RegisterPayrollPayment.Command.Commission)
+                                         Label="Commission"
+                                         Placeholder="Commission"
+                                         Prefix="$"
+                                         Min=0
+                                         Step=0.01m
+                                         Value="0" />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<Collaborator> Collaborators { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public IEnumerable<MoneyExchange> MoneyExchanges { get; set; } = default!;
+}

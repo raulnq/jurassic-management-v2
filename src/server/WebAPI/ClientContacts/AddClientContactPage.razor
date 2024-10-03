@@ -1,0 +1,31 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Add, $"#{ListClientContactsPage.List}", Swap.OuterHTML){Vals=$$"""{"clientId":"{{ClientId}}"}"""})
+           Title=@Endpoints.AddTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <TextInput Property=@nameof(AddClientContact.Command.Name)
+                               Label="Name"
+                               Placeholder="Enter name"
+                               MaxLenght=100
+                               Required=true />
+                </div>
+                <div class="col-6">
+                    <EmailInput Property=@nameof(AddClientContact.Command.Email)
+                                Label="Email"
+                                Placeholder="Enter email"
+                                MaxLenght=255
+                                Required=true />
+                </div>
+            </Content>
+        </FormRow>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid ClientId { get; set; } = default!;
+}

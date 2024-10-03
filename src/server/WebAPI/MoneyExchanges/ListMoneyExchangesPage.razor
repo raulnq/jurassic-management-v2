@@ -1,0 +1,65 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using global::Infrastructure
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new []{new Breadcrumbs.Link(Endpoints.ListTitle)})
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Toolbar>
+    <Actions>
+        <ActionButton Text=@Endpoints.RegisterTitle
+                      Icon=@Icons.Add
+                      HtmxProps=@(new HtmxProps(Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}")) />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <FormRow>
+            <Content>
+            </Content>
+        </FormRow>
+        <div id=@List>
+            <DataTable TResult=ListMoneyExchanges.Result
+                       Result=@Result.Items
+                       Context="item">
+                <TableHeader>
+                    <th></th>
+                    <th class="text-center">#</th>
+                    <th>From Currency</th>
+                    <th class="text-end">From Amount</th>
+                    <th>To Currency</th>
+                    <th class="text-end">To Amount</th>
+                    <th class="text-end">Rate</th>
+                    <th>Issued at</th>
+                </TableHeader>
+                <RowTemplate>
+                    <RowToolbar>
+                        <Actions>
+                            <ActionLink HtmxProps=@(new HtmxProps(Endpoints.Edit, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"moneyExchangeId":"{{item.MoneyExchangeId}}"}"""})
+                                        Icon=@Icons.Edit />
+                        </Actions>
+                    </RowToolbar>
+                    <td>@item.MoneyExchangeId</td>
+                    <td>@item.FromCurrency</td>
+                    <td class="text-end">@item.FromAmount.ToMoneyFormat()</td>
+                    <td>@item.ToCurrency</td>
+                    <td class="text-end">@item.ToAmount.ToMoneyFormat()</td>
+                    <td class="text-end">@item.Rate.ToMoneyFormat()</td>
+                    <td>@item.IssuedAt.ToListFormat()</td>
+                </RowTemplate>
+            </DataTable>
+            <Pagination Query=@Query
+                        Result=@Result
+                        HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"))
+                        Parameters=@(new KeyValuePair<string, object?>[] { }) />
+        </div>
+    </Content>
+</Section>
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListMoneyExchanges.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListMoneyExchanges.Query Query { get; set; } = default!;
+
+    public const string List = "money-exchange-list-target";
+}

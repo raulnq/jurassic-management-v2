@@ -1,0 +1,13 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using global::Infrastructure
+
+@foreach (var item in Result)
+{
+    <option value="@item.InvoiceId">Invoice @item.Number with a total of @item.Currency @item.Total.ToMoneyFormat()</option>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public List<SearchInvoicesNotAddedToCollection.Result> Result { get; set; } = default!;
+}

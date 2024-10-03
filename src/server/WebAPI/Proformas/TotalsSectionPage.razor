@@ -1,0 +1,47 @@
+﻿@using WebAPI.Clients
+@using WebAPI.Proformas;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<FormRow>
+    <Content>
+        <div class="col-3">
+            <NumberInput Property=@nameof(SubTotal)
+                         Label="SubTotal"
+                         Prefix="$"
+                         Value=@SubTotal
+                         Readonly=true />
+        </div>
+        <div class="col-3">
+            <NumberInput Property=@nameof(Commission)
+                         Label="Commission"
+                         Prefix="+$"
+                         Value=@Commission
+                         Readonly=true />
+        </div>
+        <div class="col-3">
+            <NumberInput Property=@nameof(Discount)
+                         Label="Discount"
+                         Prefix="-$"
+                         Value=@Discount
+                         Readonly=true />
+        </div>
+        <div class="col-3">
+            <NumberInput Property=@nameof(Total)
+                         Label="Total"
+                         Prefix="=$"
+                         Value=@Total
+                         Readonly=true />
+        </div>
+    </Content>
+</FormRow>
+@code {
+    [Parameter, EditorRequired]
+    public decimal SubTotal { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public decimal Commission { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public decimal Discount { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public decimal Total { get; set; } = default!;
+}

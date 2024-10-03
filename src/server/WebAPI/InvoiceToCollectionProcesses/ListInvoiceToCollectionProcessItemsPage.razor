@@ -1,0 +1,35 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.Proformas;
+@using global::Infrastructure
+
+<div id=@Targets.List>
+    <DataTable TResult=ListInvoiceToCollectionProcessItems.Result
+               Result=@Result.Items
+               Context="item">
+        <TableHeader>
+            <th>Invoice Number</th>
+            <th>Invoice Curreny</th>
+            <th class="text-end">SubTotal</th>
+            <th class="text-end">Taxes</th>
+            <th class="text-end">Total</th>
+        </TableHeader>
+        <RowTemplate>
+            <td>@item.InvoiceNumber</td>
+            <td>@item.InvoiceCurreny</td>
+            <td class="text-end">@item.InvoiceSubTotal.ToMoneyFormat()</td>
+            <td class="text-end">@item.InvoiceTaxes.ToMoneyFormat()</td>
+            <td class="text-end">@item.InvoiceTotal.ToMoneyFormat()</td>
+        </RowTemplate>
+    </DataTable>
+    <Pagination Query=@Query
+                Result=@Result
+                HtmxProps=@(new HtmxProps(Endpoints.ListItems, $"#{Targets.List}", Swap.OuterHTML){Vals=$$"""{"collectionId":"{{Query.CollectionId}}"}"""}) />
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListInvoiceToCollectionProcessItems.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListInvoiceToCollectionProcessItems.Query Query { get; set; } = default!;
+}

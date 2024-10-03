@@ -1,0 +1,83 @@
+﻿@using WebAPI.Invoices;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using global::Infrastructure
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new []{new Breadcrumbs.Link(Endpoints.ListTitle)})
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Toolbar>
+    <Actions>
+        <ActionButton Text=@Endpoints.RegisterTitle
+                      Icon=@Icons.Add
+                      HtmxProps=@(new HtmxProps(
+                      Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}")) />
+        <ActionButton Text=@ProformaToCollaboratorPaymentProcesses.Endpoints.RegisterTitle
+                      Icon=@Icons.Add
+                      HtmxProps=@(new HtmxProps(
+                      ProformaToCollaboratorPaymentProcesses.Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}")) />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col">
+                    <SelectFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"))
+                                  Label="Status"
+                                  Property=@(nameof(ListCollaboratorPayments.Query.Status))
+                                  Query=@Query
+                                  EmptyLabel="All Status"
+                                  Source=@(Enum.GetValues<CollaboratorPaymentStatus>().ToDictionary(i=>i.ToString(), i=>i.ToString())) />
+                </div>
+            </Content>
+        </FormRow>
+        <div id=@List>
+            <DataTable TResult=ListCollaboratorPayments.Result
+                       Result=@Result.Items
+                       Context="item">
+                <TableHeader>
+                    <th></th>
+                    <th class="text-center">#</th>
+                    <th>Collaborator</th>
+                    <th>Currency</th>
+                    <th class="text-end">Gross Salary</th>
+                    <th class="text-end">Withholding</th>
+                    <th class="text-end">Net Salary</th>
+                    <th>Number</th>
+                    <th>Paid At</th>
+                    <th>Status</th>
+                </TableHeader>
+                <RowTemplate>
+                    <RowToolbar>
+                        <Actions>
+                            <ActionLink HtmxProps=@(new HtmxProps(Endpoints.Edit, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"collaboratorPaymentId":"{{item.CollaboratorPaymentId}}"}"""})
+                                        Icon=@Icons.Edit />
+                        </Actions>
+                    </RowToolbar>
+                    <td>@item.CollaboratorPaymentId</td>
+                    <td>@item.CollaboratorName</td>
+                    <td>@item.Currency</td>
+                    <td class="text-end">@item.GrossSalary.ToMoneyFormat()</td>
+                    <td class="text-end">@item.Withholding.ToMoneyFormat()</td>
+                    <td class="text-end">@item.NetSalary.ToMoneyFormat()</td>
+                    <td>@item.Number</td>
+                    <td>@item.PaidAt?.ToListFormat()</td>
+                    <td>@item.Status</td>
+                </RowTemplate>
+            </DataTable>
+            <Pagination Query=@Query
+                        Result=@Result
+                        HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"))
+                        Parameters=@(new []{ new KeyValuePair<string, object?>(nameof(ListCollaboratorPayments.Query.Status), Query.Status)}) />
+        </div>
+    </Content>
+</Section>
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListCollaboratorPayments.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListCollaboratorPayments.Query Query { get; set; } = default!;
+
+    public const string List = "collaborator-payment-list-target";
+}

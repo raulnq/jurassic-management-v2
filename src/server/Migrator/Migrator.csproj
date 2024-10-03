@@ -1,0 +1,85 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\0001.sql" />
+    <None Remove="Scripts\0002.sql" />
+    <None Remove="Scripts\0003.sql" />
+    <None Remove="Scripts\0004.sql" />
+    <None Remove="Scripts\0005.sql" />
+    <None Remove="Scripts\0006.sql" />
+    <None Remove="Scripts\0007.sql" />
+    <None Remove="Scripts\0008.sql" />
+    <None Remove="Scripts\0009.sql" />
+    <None Remove="Scripts\0010.sql" />
+    <None Remove="Scripts\0011.sql" />
+    <None Remove="Scripts\0012.sql" />
+    <None Remove="Scripts\0013.sql" />
+    <None Remove="Scripts\0014.sql" />
+    <None Remove="Scripts\0015.sql" />
+    <None Remove="Scripts\0016.sql" />
+    <None Remove="Scripts\0017.sql" />
+    <None Remove="Scripts\0018.sql" />
+    <None Remove="Scripts\0019.sql" />
+    <None Remove="Scripts\0020.sql" />
+    <None Remove="Scripts\0021.sql" />
+    <None Remove="Scripts\0022.sql" />
+    <None Remove="Scripts\0023.sql" />
+    <None Remove="Scripts\0024.sql" />
+    <None Remove="Scripts\0025.sql" />
+    <None Remove="Scripts\0026.sql" />
+    <None Remove="Scripts\0027.sql" />
+    <None Remove="Scripts\0028.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\0028.sql" />
+    <EmbeddedResource Include="Scripts\0027.sql" />
+    <EmbeddedResource Include="Scripts\0026.sql" />
+    <EmbeddedResource Include="Scripts\0025.sql" />
+    <EmbeddedResource Include="Scripts\0024.sql" />
+    <EmbeddedResource Include="Scripts\0023.sql" />
+    <EmbeddedResource Include="Scripts\0022.sql" />
+    <EmbeddedResource Include="Scripts\0021.sql" />
+    <EmbeddedResource Include="Scripts\0020.sql" />
+    <EmbeddedResource Include="Scripts\0019.sql" />
+    <EmbeddedResource Include="Scripts\0018.sql" />
+    <EmbeddedResource Include="Scripts\0017.sql" />
+    <EmbeddedResource Include="Scripts\0016.sql" />
+    <EmbeddedResource Include="Scripts\0015.sql" />
+    <EmbeddedResource Include="Scripts\0014.sql" />
+    <EmbeddedResource Include="Scripts\0013.sql" />
+    <EmbeddedResource Include="Scripts\0012.sql" />
+    <EmbeddedResource Include="Scripts\0011.sql" />
+    <EmbeddedResource Include="Scripts\0010.sql" />
+    <EmbeddedResource Include="Scripts\0009.sql" />
+    <EmbeddedResource Include="Scripts\0008.sql" />
+    <EmbeddedResource Include="Scripts\0007.sql" />
+    <EmbeddedResource Include="Scripts\0006.sql" />
+    <EmbeddedResource Include="Scripts\0005.sql" />
+    <EmbeddedResource Include="Scripts\0003.sql" />
+    <EmbeddedResource Include="Scripts\0004.sql" />
+    <EmbeddedResource Include="Scripts\0002.sql" />
+    <EmbeddedResource Include="Scripts\0001.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dbup-sqlserver" Version="5.0.40" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+    <PackageReference Include="Polly" Version="8.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,22 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Pay, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"taxPaymentId":"{{TaxPaymentId}}"}"""})
+           Title=@Endpoints.PayTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col">
+                    <DateInput Property=@nameof(PayTaxPayment.Command.PaidAt)
+                               Label="Date"
+                               Required=true />
+                </div>
+            </Content>
+        </FormRow>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid TaxPaymentId { get; set; } = default;
+}

@@ -1,0 +1,105 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.ViewTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}")>
+    <MenuItems>
+        <MenuItem Text=@Endpoints.UploadTitle
+                  HtmxProps=@(new HtmxProps(Endpoints.Upload, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"taxPaymentId":"{{TaxPayment.TaxPaymentId}}"}"""}) />
+        <MenuItem Text="Paid"
+                  IsDisabled=@(TaxPayment.Status!= TaxPaymentStatus.Pending)
+                  HtmxProps=@(new HtmxProps(Endpoints.Pay, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"taxPaymentId":"{{TaxPayment.TaxPaymentId}}"}"""}) />
+    </MenuItems>
+</Breadcrumbs>
+<Toolbar>
+    <Actions>
+        <Divider />
+        <Link Property=@nameof(TaxPayment.DocumentUrl)
+              Value="View"
+              Href=@TaxPayment.DocumentUrl
+              IsDisabled=@(string.IsNullOrEmpty(TaxPayment.DocumentUrl))
+              Label="PDF" />
+        <Divider />
+        <Text Property=@nameof(TaxPayment.Status)
+              Value=@TaxPayment.Status
+              Label="Status" />
+        <Divider />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-3">
+                    <TextInput Property=@nameof(TaxPayment.Year)
+                               Label="Year"
+                               Value=@TaxPayment.Year
+                               Readonly=true />
+                </div>
+                <div class="col-3">
+                    <TextInput Property=@nameof(TaxPayment.Month)
+                               Label="Month"
+                               Value=@TaxPayment.Month
+                               Readonly=true />
+                </div>
+                <div class="col-3" id="@Totals">
+                    <NumberInput Property=@nameof(TaxPayment.Total)
+                                 Label="Total"
+                                 Prefix="$"
+                                 Value=@TaxPayment.Total
+                                 Readonly=true />
+                </div>
+                <div class="col-3">
+                    <NumberInput Property=@nameof(TaxPayment.ITF)
+                                 Label="ITF"
+                                 Prefix="$"
+                                 Value=@TaxPayment.ITF
+                                 Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+        <FormRow>
+            <Content>
+                <div class="col-3">
+                    <DateInput Property=@nameof(TaxPayment.CreatedAt)
+                               Label="Created at"
+                               Value=@TaxPayment.CreatedAt
+                               Readonly=true />
+                </div>
+                <div class="col-3">
+                    <DateInput Property=@nameof(TaxPayment.PaidAt)
+                               Label="Paid at"
+                               Value=@TaxPayment.PaidAt
+                               Readonly=true />
+                </div>
+            </Content>
+        </FormRow>
+    </Content>
+</Section>
+<Section Title=@Endpoints.ItemTitle>
+    <Content>
+        <Toolbar>
+            <Actions>
+                <ActionButton Text=@Endpoints.AddTitle
+                              Icon=@Icons.Add
+                              IsDisabled=@(TaxPayment.Status!= TaxPaymentStatus.Pending)
+                              HtmxProps=@(new HtmxProps(Endpoints.Add, $"#{WebAPI.Users.MainPage.Dialog}"){ Vals=$$"""{"taxPaymentId":"{{TaxPayment.TaxPaymentId}}"}""" }) />
+                <ActionButton Text=@Endpoints.LoadTitle
+                              Icon=@Icons.Add
+                              Id="load"
+                              IsDisabled=@(TaxPayment.Status!= TaxPaymentStatus.Pending)
+                              HtmxProps=@(new HtmxProps(Endpoints.Load, $"#{ListTaxesPage.List}",Swap.OuterHTML,$"#{ListTaxesPage.List}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"taxPaymentId":"{{TaxPayment.TaxPaymentId}}"}""" }) />
+            </Actions>
+        </Toolbar>
+        <ListTaxesPage Items=@TaxPayment.Items Total=@TaxPayment.Total ReadOnly=@(TaxPayment.Status!= TaxPaymentStatus.Pending)>
+        </ListTaxesPage>
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public TaxPayment TaxPayment { get; set; } = default!;
+
+    public const string Totals = "tax-payments-totals-target";
+}

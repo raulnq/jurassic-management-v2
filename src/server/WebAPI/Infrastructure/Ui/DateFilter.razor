@@ -1,0 +1,22 @@
+﻿@using WebAPI.Infrastructure.SqlKata
+
+<input type="date"
+       class="form-control"
+       name=@Property
+       id=@Property
+       hx-trigger="input changed delay:500ms"
+       hx-get="@HtmxProps.Endpoint.AddListParameters(1, @Query.PageSize,@Query.Ascending)"
+       hx-swap=@HtmxProps.Swap
+       hx-target=@HtmxProps.Target
+       hx-select=@HtmxProps.Select
+       hx-include=@HtmxProps.Include />
+
+
+@code {
+    [Parameter, EditorRequired]
+    public string Property { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListQuery Query { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public HtmxProps HtmxProps { get; set; } = default!;
+}

@@ -1,0 +1,27 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Edit,$"#{ListTaxesPage.List}",Swap.OuterHTML){Vals=$$"""{"taxPaymentId":"{{TaxPaymentItem.TaxPaymentId}}", "taxPaymentItemId":"{{TaxPaymentItem.TaxPaymentItemId}}"}"""})
+           Title=@Endpoints.EditTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <NumberInput Property=@nameof(EditTax.Command.Amount)
+                                 Label="Amount"
+                                 Placeholder="Enter amount"
+                                 Prefix="$"
+                                 Min=0.01m
+                                 Step=0.01m
+                                 Value=@TaxPaymentItem.Amount
+                                 Required=true />
+                </div>
+            </Content>
+        </FormRow>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public TaxPaymentItem TaxPaymentItem { get; set; } = default!;
+}

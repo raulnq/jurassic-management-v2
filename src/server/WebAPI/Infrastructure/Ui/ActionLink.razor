@@ -1,0 +1,79 @@
+﻿@if (IsDisabled)
+{
+    <a class="icon-link disabled"
+       href="#">
+
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <i class=@Icon></i>
+        }
+        @if (!string.IsNullOrEmpty(Text))
+        {
+            @Text
+        }
+    </a>
+}
+else
+{
+    if (string.IsNullOrEmpty(HtmxProps.HttpMethod))
+    {
+        <a class="icon-link"
+           href="#"
+           hx-get=@HtmxProps.Endpoint
+           hx-target=@HtmxProps.Target
+           hx-swap=@HtmxProps.Swap
+           hx-select=@HtmxProps.Select
+           hx-vals=@HtmxProps.Vals
+           hx-on:click=@HtmxProps.OnClick
+           hx-confirm=@HtmxProps.Confirm>
+
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <i class=@Icon></i>
+            }
+            @if (!string.IsNullOrEmpty(Text))
+            {
+                @Text
+            }
+        </a>
+    }
+    else
+    {
+        switch (HtmxProps.HttpMethod)
+        {
+            case "DELETE":
+                <a class="icon-link"
+                   href="#"
+                   hx-delete=@HtmxProps.Endpoint
+                   hx-target=@HtmxProps.Target
+                   hx-swap=@HtmxProps.Swap
+                   hx-on:click=@HtmxProps.OnClick
+                   hx-select=@HtmxProps.Select
+                   hx-vals=@HtmxProps.Vals
+                   hx-confirm=@HtmxProps.Confirm>
+
+                    @if (!string.IsNullOrEmpty(Icon))
+                    {
+                        <i class=@Icon></i>
+                    }
+                    @if (!string.IsNullOrEmpty(Text))
+                    {
+                        @Text
+                    }
+                </a>
+                break;
+        }
+    }
+
+}
+
+@code {
+    [Parameter]
+    public string Icon { get; set; } = default!;
+    [Parameter]
+    public string Text { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public HtmxProps HtmxProps { get; set; } = default!;
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+}

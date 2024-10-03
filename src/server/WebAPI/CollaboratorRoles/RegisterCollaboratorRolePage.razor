@@ -1,0 +1,55 @@
+﻿@using WebAPI.CollaboratorRoles;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.RegisterTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(@Endpoints.Register,$"#{WebAPI.Users.MainPage.Workspace}"))>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col">
+                            <TextInput Property=@nameof(RegisterCollaboratorRole.Command.Name)
+                                       Label="Name"
+                                       Placeholder="Enter name"
+                                       MaxLenght=100
+                                       Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(RegisterCollaboratorRole.Command.ProfitPercentage)
+                                         Label="Profit percentage"
+                                         Placeholder="Enter profit percentage"
+                                         Sufix="%"
+                                         Max=100
+                                         Min=0
+                                         Step=0.0001m
+                                         Value="0"
+                                         Required=true />
+                        </div>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(RegisterCollaboratorRole.Command.FeeAmount)
+                                         Label="Fee amount"
+                                         Placeholder="Enter fee amount"
+                                         Prefix="$"
+                                         Min=0
+                                         Step=0.01m
+                                         Value="0"
+                                         Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+
+}

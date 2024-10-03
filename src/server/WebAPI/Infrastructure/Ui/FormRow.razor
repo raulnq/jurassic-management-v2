@@ -1,0 +1,7 @@
+﻿<div class="row mb-4">
+    @Content
+</div>
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment? Content { get; set; } = default!;
+}

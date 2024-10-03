@@ -1,0 +1,41 @@
+﻿@using WebAPI.Clients;
+@using WebAPI.CollaboratorRoles
+@using WebAPI.Collaborators
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Confirm, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"collaboratorPaymentId":"{{CollaboratorPaymentId}}"}"""})
+           Title=@Endpoints.ConfirmTitle>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-4">
+                    <TextInput Property=@nameof(ConfirmCollaboratorPayment.Command.Number)
+                               Label="Number"
+                               Placeholder="Enter Number"
+                               MaxLenght=50
+                               Required=true />
+                </div>
+                <div class="col-4">
+                    <DateInput Property=@nameof(ConfirmCollaboratorPayment.Command.ConfirmedAt)
+                               Label="Date"
+                               Required=true />
+                </div>
+                <div class="col-4">
+                    <NumberInput Property=@nameof(ConfirmCollaboratorPayment.Command.ExchangeRate)
+                                 Label="Exchange Rate"
+                                 Placeholder="Exchange Rate"
+                                 Min=1m
+                                 Step=0.001m
+                                 Value="1"
+                                 Required=true />
+                </div>
+            </Content>
+        </FormRow>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid CollaboratorPaymentId { get; set; } = default;
+}

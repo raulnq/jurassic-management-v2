@@ -1,0 +1,85 @@
+﻿@using WebAPI.Proformas;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using global::Infrastructure
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new []{new Breadcrumbs.Link(Endpoints.ListTitle)})
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Toolbar>
+    <Actions>
+        <ActionButton Text=@Endpoints.RegisterTitle
+                      Icon=@Icons.Add
+                      HtmxProps=@(new HtmxProps(Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}")) />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col-6">
+                    <SelectFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"){Include=$"#{nameof(ListProformas.Query.Number)}"})
+                                  Label="Status"
+                                  Property=@(nameof(ListProformas.Query.Status))
+                                  Query=@Query
+                                  EmptyLabel="All Status"
+                                  Source=@(Enum.GetValues<ProformaStatus>().ToDictionary(i=>i.ToString(), i=>i.ToString()))>
+                    </SelectFilter>
+                </div>
+                <div class="col-6">
+                    <SearchFilter Label="Number"
+                                  Property=@nameof(ListProformas.Query.Number)
+                                  Query=@Query
+                                  HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"){Include=$"#{nameof(ListProformas.Query.Status)}"}) />
+                </div>
+            </Content>
+        </FormRow>
+        <div id=@List>
+            <DataTable TResult=ListProformas.Result
+                       Result=@Result.Items
+                       Context="item">
+                <TableHeader>
+                    <th></th>
+                    <th class="text-center">#</th>
+                    <th>Number</th>
+                    <th>Client</th>
+                    <th>Project</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Currency</th>
+                    <th class="text-end">Total</th>
+                    <th>Status</th>
+                </TableHeader>
+                <RowTemplate>
+                    <RowToolbar>
+                        <Actions>
+                            <ActionLink HtmxProps=@(new HtmxProps(Endpoints.View, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"proformaId":"{{item.ProformaId}}"}"""})
+                                        Icon=@Icons.View />
+                        </Actions>
+                    </RowToolbar>
+                    <td>@item.ProformaId</td>
+                    <td>@item.Number</td>
+                    <td>@item.ClientName</td>
+                    <td>@item.ProjectName</td>
+                    <td>@item.Start.ToListFormat()</td>
+                    <td>@item.End.ToListFormat()</td>
+                    <td>@item.Currency</td>
+                    <td class="text-end">@item.Total.ToMoneyFormat()</td>
+                    <td>@item.Status</td>
+                </RowTemplate>
+            </DataTable>
+            <Pagination Query=@Query
+                        Result=@Result
+                        HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"))
+                        Parameters=@(new KeyValuePair<string, object?>[]{ new (nameof(Query.Status), Query.Status), new (nameof(Query.Number), Query.Number)}) />
+        </div>
+    </Content>
+</Section>
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListProformas.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListProformas.Query Query { get; set; } = default!;
+
+    public const string List = "proforma-list-target";
+}

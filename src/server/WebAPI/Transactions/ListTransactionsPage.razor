@@ -1,0 +1,76 @@
+﻿@using WebAPI.CollaboratorRoles;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using global::Infrastructure
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new []{new Breadcrumbs.Link(Endpoints.ListTitle)})
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Toolbar>
+    <Actions>
+        <ActionButton Text=@Endpoints.RegisterTitle
+                      Icon=@Icons.Add
+                      HtmxProps=@(new HtmxProps(Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}")) />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col">
+                    <SelectFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"))
+                                  Label="Type"
+                                  Property=@(nameof(ListTransactions.Query.Type))
+                                  Query=@Query
+                                  EmptyLabel="All Types"
+                                  Source=@(Enum.GetValues<TransactionType>().ToDictionary(i=>i.ToString(), i=>i.ToString())) />
+                </div>
+            </Content>
+        </FormRow>
+        <div id=@List>
+            <DataTable TResult=ListTransactions.Result
+                       Result=@Result.Items
+                       Context="item">
+                <TableHeader>
+                    <th></th>
+                    <th class="text-center">#</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Currency</th>
+                    <th class="text-end">SubTotal</th>
+                    <th class="text-end">Taxes</th>
+                    <th class="text-end">Total</th>
+                    <th>Issued at</th>
+                </TableHeader>
+                <RowTemplate>
+                    <RowToolbar>
+                        <Actions>
+                            <ActionLink HtmxProps=@(new HtmxProps(Endpoints.Edit, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"transactionId":"{{item.TransactionId}}"}"""})
+                                        Icon=@Icons.Edit />
+                        </Actions>
+                    </RowToolbar>
+                    <td>@item.TransactionId</td>
+                    <td>@item.Description</td>
+                    <td>@item.Type</td>
+                    <td>@item.Currency</td>
+                    <td class="text-end">@item.SubTotal.ToMoneyFormat()</td>
+                    <td class="text-end">@item.Taxes.ToMoneyFormat()</td>
+                    <td class="text-end">@item.Total.ToMoneyFormat()</td>
+                    <td>@item.IssuedAt.ToListFormat()</td>
+                </RowTemplate>
+            </DataTable>
+            <Pagination Query=@Query
+                        Result=@Result
+                        HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"))
+                        Parameters=@(new[] { new KeyValuePair<string, object?>(nameof(Query.Type), Query.Type) }) />
+        </div>
+    </Content>
+</Section>
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListTransactions.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListTransactions.Query Query { get; set; } = default!;
+
+    public const string List = "transaction-list-target";
+}

@@ -1,0 +1,133 @@
+﻿@using WebAPI.Clients;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.RegisterTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}"))>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col">
+                            <TextInput Property=@nameof(RegisterClient.Command.Name)
+                                       Label="Name"
+                                       Placeholder="Enter name"
+                                       MaxLenght=200
+                                       Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <TextInput Property=@nameof(RegisterClient.Command.PhoneNumber)
+                                       Label="Phone number"
+                                       Placeholder="Enter phone number"
+                                       MaxLenght=50
+                                       Required=true />
+                        </div>
+                        <div class="col-6">
+                            <TextInput Property=@nameof(RegisterClient.Command.DocumentNumber)
+                                       Label="Document number"
+                                       Placeholder="Enter document number"
+                                       MaxLenght=50
+                                       Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col">
+                            <TextInput Property=@nameof(RegisterClient.Command.Address)
+                                       Label="Address"
+                                       Placeholder="Enter address"
+                                       MaxLenght=500
+                                       Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(RegisterClient.Command.PenaltyMinimumHours)
+                                         Label="Penalty minimum hours"
+                                         Placeholder="Enter penalty minimum hours"
+                                         Sufix="hours"
+                                         Min=0
+                                         Step=0.01m
+                                         Value=0
+                                         Required=true />
+                        </div>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(RegisterClient.Command.PenaltyAmount)
+                                         Label="Penalty amount"
+                                         Placeholder="Enter penalty amount"
+                                         Prefix="$"
+                                         Min=0
+                                         Step=0.01m
+                                         Value=0
+                                         Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(RegisterClient.Command.TaxesExpensesPercentage)
+                                         Label="Taxes expenses percentage"
+                                         Placeholder="Enter taxes expenses percentage"
+                                         Sufix="%"
+                                         Min=0
+                                         Max=100
+                                         Step=0.01m
+                                         Value=0
+                                         Required=true />
+                        </div>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(RegisterClient.Command.AdministrativeExpensesPercentage)
+                                         Label="Administrative expenses percentage"
+                                         Placeholder="Enter administrative expenses percentage"
+                                         Sufix="%"
+                                         Min=0
+                                         Max=100
+                                         Step=0.01m
+                                         Value=0
+                                         Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(RegisterClient.Command.BankingExpensesPercentage)
+                                         Label="Banking expenses percentage"
+                                         Placeholder="Enter banking expenses percentage"
+                                         Sufix="%"
+                                         Min=0
+                                         Max=100
+                                         Step=0.01m
+                                         Value=0
+                                         Required=true />
+                        </div>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(RegisterClient.Command.MinimumBankingExpenses)
+                                         Label="Minimum banking expenses"
+                                         Placeholder="Enter minimum banking expenses"
+                                         Prefix="$"
+                                         Min=0
+                                         Step=0.01m
+                                         Value=0
+                                         Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+}

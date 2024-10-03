@@ -1,0 +1,19 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Edit, $"#{ListProjectsPage.List}", Swap.OuterHTML){Vals=$$"""{"clientId":"{{Project.ClientId}}", "projectId":"{{Project.ProjectId}}"}"""})
+           Title=@Endpoints.EditTitle>
+    <Content>
+        <TextInput Property=@nameof(EditProject.Command.Name)
+                   Label="Name"
+                   Placeholder="Enter name"
+                   MaxLenght=100
+                   Required=true
+                   Value=@Project.Name />
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Project Project { get; set; } = default!;
+}

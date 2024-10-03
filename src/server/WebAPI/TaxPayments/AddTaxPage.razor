@@ -1,0 +1,30 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<ModalForm HtmxProps=@(new HtmxProps(Endpoints.Add, $"#{ListTaxesPage.List}", Swap.OuterHTML){Vals=$$"""{"taxPaymentId":"{{TaxPaymentId}}"}"""})
+           Title=@Endpoints.AddTitle>
+    <Content>
+        <div class="col-6">
+            <SelectInput Property=@nameof(AddTax.Command.Type)
+                         Label="Type"
+                         Source=@(Enum.GetValues<TaxType>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                         Required=true>
+            </SelectInput>
+        </div>
+        <div class="col-6">
+            <NumberInput Property=@nameof(AddTax.Command.Amount)
+                         Label="Amount"
+                         Placeholder="Enter amount"
+                         Prefix="$"
+                         Min=0.01m
+                         Step=0.01m
+                         Value="0"
+                         Required=true />
+        </div>
+    </Content>
+</ModalForm>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid TaxPaymentId { get; set; } = default!;
+}

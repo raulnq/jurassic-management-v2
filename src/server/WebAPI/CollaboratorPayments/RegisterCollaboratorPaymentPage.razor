@@ -1,0 +1,57 @@
+﻿@using WebAPI.Clients
+@using WebAPI.Collaborators
+@using WebAPI.Invoices
+@using WebAPI.ProformaToCollaboratorPaymentProcesses
+@using WebAPI.ProformaToInvoiceProcesses
+@using WebAPI.Proformas;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.RegisterTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}")>
+</Breadcrumbs>
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}"))>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col-9">
+                            <SelectInput Property=@(nameof(RegisterCollaboratorPayment.Command.CollaboratorId))
+                                         Label="Collaborator"
+                                         Source=@Collaborators.ToDictionary(c=>c.CollaboratorId, c=>c.Name)
+                                         Required=true />
+                        </div>
+                        <div class="col-3">
+                            <SelectInput Property=@nameof(RegisterCollaboratorPayment.Command.Currency)
+                                         Label="Currency"
+                                         Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         Required=true>
+                            </SelectInput>
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(RegisterCollaboratorPayment.Command.GrossSalary)
+                                         Label="Gross Salary"
+                                         Placeholder="Gross salary"
+                                         Prefix="$"
+                                         Min=0.0001m
+                                         Step=0.0001m
+                                         Value="0"
+                                         Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<Collaborator> Collaborators { get; set; } = default!;
+}

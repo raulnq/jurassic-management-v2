@@ -1,0 +1,121 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.CollaboratorRoles;
+@using WebAPI.Proformas
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.EditTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}")>
+    <MenuItems>
+        <MenuItem Text="Upload document"
+                  HtmxProps=@(new HtmxProps(Endpoints.Upload, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"moneyExchangeId":"{{MoneyExchange.MoneyExchangeId}}"}"""}) />
+    </MenuItems>
+</Breadcrumbs>
+<Toolbar>
+    <Actions>
+        <Divider />
+        <Link Property=@nameof(MoneyExchange.DocumentUrl)
+              Value="View"
+              Href=@MoneyExchange.DocumentUrl
+              IsDisabled=@(string.IsNullOrEmpty(MoneyExchange.DocumentUrl))
+              Label="PDF" />
+        <Divider />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(Endpoints.Edit,$"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"moneyExchangeId":"{{MoneyExchange.MoneyExchangeId}}"}"""})>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col-4">
+                            <SelectInput Property=@nameof(EditMoneyExchange.Command.FromCurrency)
+                                         Label="From Currency"
+                                         Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         Value=@MoneyExchange.FromCurrency.ToString()
+                                         Required=true>
+                            </SelectInput>
+                        </div>
+                        <div class="col-4">
+                            <NumberInput Property=@nameof(EditMoneyExchange.Command.FromAmount)
+                                         Label="From Amount"
+                                         Placeholder="From Amount"
+                                         Prefix="$"
+                                         Min=0.0001m
+                                         Step=0.0001m
+                                         Value=@MoneyExchange.FromAmount
+                                         Required=true />
+                        </div>
+                        <div class="col-4">
+                            <NumberInput Property=@nameof(MoneyExchange.FromITF)
+                                         Label="From ITF"
+                                         Placeholder="From ITF"
+                                         Prefix="$"
+                                         Min=0.0001m
+                                         Step=0.0001m
+                                         Value=@MoneyExchange.FromITF
+                                         Readonly=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-4">
+                            <SelectInput Property=@nameof(EditMoneyExchange.Command.ToCurrency)
+                                         Label="To Currency"
+                                         Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         Value=@MoneyExchange.ToCurrency.ToString()
+                                         Required=true>
+                            </SelectInput>
+                        </div>
+                        <div class="col-4">
+                            <NumberInput Property=@nameof(EditMoneyExchange.Command.ToAmount)
+                                         Label="To Amount"
+                                         Placeholder="To Amount"
+                                         Prefix="$"
+                                         Min=0.0001m
+                                         Step=0.0001m
+                                         Value=@MoneyExchange.ToAmount
+                                         Required=true />
+                        </div>
+                        <div class="col-4">
+                            <NumberInput Property=@nameof(MoneyExchange.ToITF)
+                                         Label="To ITF"
+                                         Placeholder="To ITF"
+                                         Prefix="$"
+                                         Min=0.0001m
+                                         Step=0.0001m
+                                         Value=@MoneyExchange.ToITF
+                                         Readonly=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-4">
+                            <NumberInput Property=@nameof(EditMoneyExchange.Command.Rate)
+                                         Label="Rate"
+                                         Placeholder="Rate"
+                                         Prefix="$"
+                                         Min=0.0001m
+                                         Step=0.0001m
+                                         Value=@MoneyExchange.Rate
+                                         Required=true />
+                        </div>
+                        <div class="col-4">
+                            <DateInput Property=@nameof(EditMoneyExchange.Command.IssuedAt)
+                                       Label="Issue At"
+                                       Value=@MoneyExchange.IssuedAt!.Value.ToString("yyyy-MM-dd")
+                                       Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public MoneyExchange MoneyExchange { get; set; } = default!;
+}

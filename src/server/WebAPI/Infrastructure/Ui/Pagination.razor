@@ -1,0 +1,109 @@
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@using WebAPI.Infrastructure.SqlKata
+@typeparam TResult
+
+<nav>
+    <ul class="pagination" hx-ext="path-params">
+        <li class="page-item @(Result.HasPreviousPage?"":"disabled")">
+            @if (string.IsNullOrEmpty(HtmxProps.Select))
+            {
+                <a class="page-link"
+                   href="#"
+                   hx-get="@GetUrl(Query.Page-1)"
+                   hx-swap=@HtmxProps.Swap
+                   hx-vals=@HtmxProps.Vals
+                   hx-target=@HtmxProps.Target>Previous</a>
+            }
+            else
+            {
+                <a class="page-link"
+                   href="#"
+                   hx-get="@GetUrl(Query.Page-1)"
+                   hx-swap=@HtmxProps.Swap
+                   hx-vals=@HtmxProps.Vals
+                   hx-target=@HtmxProps.Target
+                   hx-select=@HtmxProps.Select>Previous</a>
+            }
+
+        </li>
+        @for (int i = 1; i <= Result.TotalPages; i++)
+        {
+            @if (string.IsNullOrEmpty(HtmxProps.Select))
+            {
+                <li class="page-item @(Result.Page==i?"active":"")">
+                    <a class="page-link"
+                       href="#"
+                       hx-get="@GetUrl(i)"
+                       hx-swap=@HtmxProps.Swap
+                       hx-vals=@HtmxProps.Vals
+                       hx-target=@HtmxProps.Target>@i</a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item @(Result.Page==i?"active":"")">
+                    <a class="page-link"
+                       href="#"
+                       hx-get="@GetUrl(i)"
+                       hx-swap=@HtmxProps.Swap
+                       hx-vals=@HtmxProps.Vals
+                       hx-target=@HtmxProps.Target
+                       hx-select=@HtmxProps.Select>@i</a>
+                </li>
+            }
+
+        }
+        @if (string.IsNullOrEmpty(HtmxProps.Select))
+        {
+            <li class="page-item @(Result.HasNextPage?"":"disabled")">
+                <a class="page-link"
+                   href="#"
+                   hx-get="@GetUrl(Query.Page+1)"
+                   hx-swap=@HtmxProps.Swap
+                   hx-vals=@HtmxProps.Vals
+                   hx-target=@HtmxProps.Target>Next</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item @(Result.HasNextPage?"":"disabled")">
+                <a class="page-link"
+                   href="#"
+                   hx-get="@GetUrl(Query.Page+1)"
+                   hx-swap=@HtmxProps.Swap
+                   hx-vals=@HtmxProps.Vals
+                   hx-target=@HtmxProps.Target
+                   hx-select=@HtmxProps.Select>Next</a>
+            </li>
+        }
+
+    </ul>
+</nav>
+
+@code {
+    [Parameter, EditorRequired]
+    public ListQuery Query { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListResults<TResult> Result { get; set; } = default!;
+    [Parameter]
+    public IEnumerable<KeyValuePair<string, object?>> Parameters { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public HtmxProps HtmxProps { get; set; } = default!;
+
+    public string GetUrl(int page)
+    {
+        var parameters = new List<KeyValuePair<string, string>>();
+        if (Parameters != null)
+        {
+            foreach (var parameter in Parameters.Where(p => p.Value != null))
+            {
+                parameters.Add(new KeyValuePair<string, string>(parameter.Key, parameter.Value!.ToString()!));
+            }
+        }
+        parameters.Add(new KeyValuePair<string, string>("page", page.ToString()));
+        parameters.Add(new KeyValuePair<string, string>("pageSize", Query.PageSize.ToString()));
+        parameters.Add(new KeyValuePair<string, string>("ascending", Query.Ascending.ToString()));
+        var queryBuilder = new QueryBuilder(parameters);
+        return HtmxProps.Endpoint + queryBuilder;
+    }
+}

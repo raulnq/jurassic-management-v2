@@ -1,0 +1,56 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.CollaboratorRoles;
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.EditTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(Endpoints.Edit, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"collaboratorRoleId":"{{CollaboratorRole.CollaboratorRoleId}}"}"""})>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col">
+                            <TextInput Property=@nameof(EditCollaboratorRole.Command.Name)
+                                       Label="Name"
+                                       Placeholder="Enter name"
+                                       Value=@CollaboratorRole.Name
+                                       Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(EditCollaboratorRole.Command.ProfitPercentage)
+                                         Label="Profit percentage"
+                                         Placeholder="Enter profit percentage"
+                                         Sufix="%"
+                                         Max=100
+                                         Min=0
+                                         Step=0.0001m
+                                         Value=@CollaboratorRole.ProfitPercentage
+                                         Required=true />
+                        </div>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(EditCollaboratorRole.Command.FeeAmount)
+                                         Label="Fee amount"
+                                         Placeholder="Enter fee amount"
+                                         Prefix="$"
+                                         Min=0
+                                         Step=0.01m
+                                         Value=@CollaboratorRole.FeeAmount
+                                         Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public CollaboratorRole CollaboratorRole { get; set; } = default!;
+}

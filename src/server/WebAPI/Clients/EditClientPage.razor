@@ -1,0 +1,176 @@
+﻿@using WebAPI.ClientContacts
+@using WebAPI.Collaborators;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.Projects;
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Clients.Endpoints.List.AddListParameters()), new(Endpoints.EditTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(Clients.Endpoints.Edit, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"clientId":"{{Client.ClientId}}"}"""})>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col">
+                            <TextInput Property=@nameof(EditClient.Command.Name)
+                                       Label="Name"
+                                       Placeholder="Enter name"
+                                       MaxLenght=200
+                                       Required=true
+                                       Value=@Client.Name />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <TextInput Property=@nameof(EditClient.Command.PhoneNumber)
+                                       Label="Phone number"
+                                       Placeholder="Enter phone number"
+                                       MaxLenght=50
+                                       Required=true
+                                       Value=@Client.PhoneNumber />
+                        </div>
+                        <div class="col-6">
+                            <TextInput Property=@nameof(EditClient.Command.DocumentNumber)
+                                       Label="Document number"
+                                       Placeholder="Enter document number"
+                                       MaxLenght=50
+                                       Required=true
+                                       Value=@Client.DocumentNumber />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col">
+                            <TextInput Property=@nameof(EditClient.Command.Address)
+                                       Label="Address"
+                                       Placeholder="Enter address"
+                                       MaxLenght=500
+                                       Required=true
+                                       Value=@Client.Address />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(EditClient.Command.PenaltyMinimumHours)
+                                         Label="Penalty minimum hours"
+                                         Placeholder="Enter penalty minimum hours"
+                                         Sufix="hours"
+                                         Min=0
+                                         Step=0.01m
+                                         Required=true
+                                         Value=@Client.PenaltyMinimumHours />
+                        </div>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(EditClient.Command.PenaltyAmount)
+                                         Label="Penalty amount"
+                                         Placeholder="Enter penalty amount"
+                                         Prefix="$"
+                                         Min=0
+                                         Step=0.01m
+                                         Required=true
+                                         Value=@Client.PenaltyAmount />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(EditClient.Command.TaxesExpensesPercentage)
+                                         Label="Taxes expenses percentage"
+                                         Placeholder="Enter taxes expenses percentage"
+                                         Sufix="%"
+                                         Min=0
+                                         Max=100
+                                         Step=0.01m
+                                         Required=true
+                                         Value=@Client.TaxesExpensesPercentage />
+                        </div>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(EditClient.Command.AdministrativeExpensesPercentage)
+                                         Label="Administrative expenses percentage"
+                                         Placeholder="Enter administrative expenses percentage"
+                                         Sufix="%"
+                                         Min=0
+                                         Max=100
+                                         Step=0.01m
+                                         Required=true
+                                         Value=@Client.AdministrativeExpensesPercentage />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(EditClient.Command.BankingExpensesPercentage)
+                                         Label="Banking expenses percentage"
+                                         Placeholder="Enter banking expenses percentage"
+                                         Sufix="%"
+                                         Min=0
+                                         Max=100
+                                         Step=0.01m
+                                         Value=@Client.BankingExpensesPercentage
+                                         Required=true />
+                        </div>
+                        <div class="col-6">
+                            <NumberInput Property=@nameof(EditClient.Command.MinimumBankingExpenses)
+                                         Label="Minimum banking expenses"
+                                         Placeholder="Enter minimum banking expenses"
+                                         Prefix="$"
+                                         Min=0
+                                         Step=0.01m
+                                         Value=@Client.MinimumBankingExpenses
+                                         Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+<Section Title=@Projects.Endpoints.Title>
+    <Content>
+        <Toolbar>
+            <Actions>
+                <ActionButton Text=@Projects.Endpoints.AddTitle
+                              Icon=@Icons.Add
+                              HtmxProps=@(new HtmxProps(WebAPI.Projects.Endpoints.Add, $"#{WebAPI.Users.MainPage.Dialog}"){ Vals=$$"""{"clientId":"{{Client.ClientId}}"}""" }) />
+            </Actions>
+        </Toolbar>
+        <ListProjectsPage Query=@ListProjectsQuery
+                          Result=@ListProjectsResult></ListProjectsPage>
+    </Content>
+</Section>
+
+<Section Title=@ClientContacts.Endpoints.Title>
+    <Content>
+        <Toolbar>
+            <Actions>
+                <ActionButton Text=@ClientContacts.Endpoints.AddTitle
+                              Icon=@Icons.Add
+                              HtmxProps=@(new HtmxProps(WebAPI.ClientContacts.Endpoints.Add, $"#{WebAPI.Users.MainPage.Dialog}"){ Vals=$$"""{"clientId":"{{Client.ClientId}}"}""" }) />
+            </Actions>
+        </Toolbar>
+        <ListClientContactsPage Query=@ListClientContactsQuery
+                                Result=@ListClientContactsResult></ListClientContactsPage>
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public Client Client { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListResults<ListProjects.Result> ListProjectsResult { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListProjects.Query ListProjectsQuery { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListResults<ListClientContacts.Result> ListClientContactsResult { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListClientContacts.Query ListClientContactsQuery { get; set; } = default!;
+}

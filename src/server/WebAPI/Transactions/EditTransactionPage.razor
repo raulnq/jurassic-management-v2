@@ -1,0 +1,115 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.CollaboratorRoles;
+@using WebAPI.Proformas
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new Breadcrumbs.Link[]{ new(Endpoints.ListTitle, Endpoints.List.AddListParameters()), new(Endpoints.EditTitle) })
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}")>
+    <MenuItems>
+        <MenuItem Text="Upload document"
+                  HtmxProps=@(new HtmxProps(Endpoints.Upload, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"transactionId":"{{Transaction.TransactionId}}"}"""}) />
+    </MenuItems>
+</Breadcrumbs>
+<Toolbar>
+    <Actions>
+        <Divider />
+        <Link Property=@nameof(GetTransaction.Result.DocumentUrl)
+              Value="View"
+              Href=@Transaction.DocumentUrl
+              IsDisabled=@(string.IsNullOrEmpty(Transaction.DocumentUrl))
+              Label="PDF" />
+        <Divider />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <Form HtmxProps=@(new HtmxProps(Endpoints.Edit,$"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"transactionId":"{{Transaction.TransactionId}}"}"""})>
+            <Content>
+                <FormRow>
+                    <Content>
+                        <div class="col">
+                            <TextInput Property=@nameof(RegisterTransaction.Command.Description)
+                                       Label="Description"
+                                       Placeholder="Enter description"
+                                       MaxLenght=1000
+                                       Value=@Transaction.Description
+                                       Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-4">
+                            <SelectInput Property=@nameof(RegisterTransaction.Command.Type)
+                                         Label="Type"
+                                         Source=@(Enum.GetValues<TransactionType>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         Value=@Transaction.Type.ToString()
+                                         Required=true>
+                            </SelectInput>
+                        </div>
+                        <div class="col-4">
+                            <TextInput Property=@nameof(RegisterTransaction.Command.Number)
+                                       Label="Number"
+                                       Placeholder="Enter number"
+                                       MaxLenght=50
+                                       Value=@Transaction.Number />
+                        </div>
+                        <div class="col-4">
+                            <DateInput Property=@nameof(RegisterTransaction.Command.IssuedAt)
+                                       Label="Issued at"
+                                       Value=@Transaction.IssuedAt?.ToString("yyyy-MM-dd")
+                                       Required=true />
+                        </div>
+                    </Content>
+                </FormRow>
+                <FormRow>
+                    <Content>
+                        <div class="col-3">
+                            <SelectInput Property=@nameof(RegisterTransaction.Command.Currency)
+                                         Label="Currency"
+                                         Source=@(Enum.GetValues<Currency>().ToDictionary(i=>i.ToString(), i=>i.ToString()))
+                                         Value=@Transaction.Currency.ToString()
+                                         Required=true />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(RegisterTransaction.Command.SubTotal)
+                                         Label="Sub total"
+                                         Placeholder="Enter subtotal"
+                                         Prefix="$"
+                                         Min=0.01m
+                                         Step=0.01m
+                                         Value=@Transaction.SubTotal
+                                         Required=true />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(RegisterTransaction.Command.Taxes)
+                                         Label="Taxes"
+                                         Placeholder="Enter taxes"
+                                         Prefix="$"
+                                         Min=0
+                                         Step=0.01m
+                                         Value=@Transaction.Taxes
+                                         Required=true />
+                        </div>
+                        <div class="col-3">
+                            <NumberInput Property=@nameof(GetTransaction.Result.Total)
+                                         Label="Total"
+                                         Placeholder="Enter total"
+                                         Prefix="$"
+                                         Min=0.01m
+                                         Step=0.01m
+                                         Value=@Transaction.Total
+                                         Readonly=true />
+                        </div>
+                    </Content>
+                </FormRow>
+            </Content>
+        </Form>
+    </Content>
+</Section>
+
+@code {
+    [Parameter, EditorRequired]
+    public Transaction Transaction { get; set; } = default!;
+}

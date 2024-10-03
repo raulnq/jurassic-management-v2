@@ -1,0 +1,66 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new []{new Breadcrumbs.Link(Endpoints.ListTitle)})
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Toolbar>
+    <Actions>
+        <ActionButton Text=@Endpoints.RegisterTitle
+                      Icon=@Icons.Add
+                      HtmxProps=@(new HtmxProps(Endpoints.Register, $"#{WebAPI.Users.MainPage.Workspace}")) />
+    </Actions>
+</Toolbar>
+<Section>
+    <Content>
+        <FormRow>
+            <Content>
+                <div class="col">
+                    <SearchFilter Label="Year"
+                                  Property=@(nameof(ListTaxPayments.Query.Year))
+                                  Query=@Query
+                                  HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}")) />
+                </div>
+            </Content>
+        </FormRow>
+        <div id=@List>
+            <DataTable TResult=ListTaxPayments.Result
+                       Result=@Result.Items
+                       Context="item">
+                <TableHeader>
+                    <th></th>
+                    <th class="text-center">#</th>
+                    <th>Year</th>
+                    <th>Month</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </TableHeader>
+                <RowTemplate>
+                    <RowToolbar>
+                        <Actions>
+                            <ActionLink Icon=@Icons.Edit
+                                        HtmxProps=@(new HtmxProps(Endpoints.View, $"#{WebAPI.Users.MainPage.Workspace}"){Vals=$$"""{"taxPaymentId":"{{item.TaxPaymentId}}"}"""}) />
+                        </Actions>
+                    </RowToolbar>
+                    <td>@item.TaxPaymentId</td>
+                    <td>@item.Year</td>
+                    <td>@item.Month</td>
+                    <td>@item.Total</td>
+                    <td>@item.Status</td>
+                </RowTemplate>
+            </DataTable>
+            <Pagination Query=@Query
+                        Result=@Result
+                        HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"))
+                        Parameters=@(new []{ new KeyValuePair<string, object?>(nameof(Query.Year), Query.Year)}) />
+        </div>
+    </Content>
+</Section>
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListTaxPayments.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListTaxPayments.Query Query { get; set; } = default!;
+
+    public const string List = "tax-payments-list-target";
+}

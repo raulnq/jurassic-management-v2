@@ -1,0 +1,18 @@
+﻿<aside class="navbar navbar-expand z-3 d-block position-fixed top-0 start-0 bottom-0 border-end bg-white p-0 ms-0" style="width: 16.25rem;">
+    <a class="navbar-brand py-0 px-4 d-flex align-items-center" href="#" aria-label="Front" style="height: 3.875rem;">
+        <img class="d-block" src="https://placehold.co/100x50" alt="Logo" style="min-width: 6.5rem; max-width: 6.5rem;">
+    </a>
+    <div class="overflow-y-auto" style="height: calc(100% - 3.875rem);">
+        <div class="d-flex flex-column px-4">
+            <span class="mt-4 px-3 py-2 fw-bold fs-6">MENU</span>
+            <ul class="nav nav-pills">
+                @Content
+            </ul>
+        </div>
+    </div>
+</aside>
+
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment? Content { get; set; } = default!;
+}

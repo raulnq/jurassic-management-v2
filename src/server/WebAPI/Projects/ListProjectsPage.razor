@@ -1,0 +1,35 @@
+﻿@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using WebAPI.Projects;
+
+<div id=@List>
+    <DataTable TResult=ListProjects.Result
+               Result=@Result.Items
+               Context="item">
+        <TableHeader>
+            <th></th>
+            <th>Name</th>
+        </TableHeader>
+        <RowTemplate>
+            <RowToolbar>
+                <Actions>
+                    <ActionLink HtmxProps=@(new HtmxProps(Endpoints.Edit, $"#{WebAPI.Users.MainPage.Dialog}"){Vals=$$"""{"clientId":"{{item.ClientId}}", "projectId":"{{item.ProjectId}}"}"""})
+                                Icon=@Icons.Edit />
+                </Actions>
+            </RowToolbar>
+            <td>@item.Name</td>
+        </RowTemplate>
+    </DataTable>
+    <Pagination Query=@Query
+                Result=@Result
+                HtmxProps=@(new HtmxProps(Endpoints.List,$"#{List}", Swap.OuterHTML){Vals=$$"""{"clientId":"{{Query.ClientId}}"}"""}) />
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public ListResults<ListProjects.Result> Result { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public ListProjects.Query Query { get; set; } = default!;
+
+    public const string List = "project-list-target";
+}
