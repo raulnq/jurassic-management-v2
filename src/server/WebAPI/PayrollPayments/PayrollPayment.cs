@@ -106,6 +106,14 @@ public class PayrollPayment
         PaidAt = paidAt;
     }
 
+    public void EnsureDocument()
+    {
+        if (string.IsNullOrEmpty(DocumentUrl))
+        {
+            throw new DomainException("payroll-payment-document-not-uploaded");
+        }
+    }
+
     public void PayAfp(DateTime paidAt, decimal afp)
     {
         EnsureStatus(PayrollPaymentStatus.Paid);

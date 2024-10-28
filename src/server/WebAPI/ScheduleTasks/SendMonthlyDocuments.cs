@@ -11,6 +11,7 @@ using WebAPI.Companies;
 using WebAPI.Infrastructure.EntityFramework;
 using WebAPI.Infrastructure.ExceptionHandling;
 using WebAPI.MoneyExchanges;
+using WebAPI.PayrollPayments;
 using WebAPI.Transactions;
 
 namespace WebAPI.ScheduleTasks
@@ -56,6 +57,9 @@ namespace WebAPI.ScheduleTasks
             var collections = await _dbContext.Set<Collection>()
                 .AsNoTracking().Where(c => c.ConfirmedAt < end && c.ConfirmedAt >= start && c.DocumentUrl != null).ToListAsync();
 
+            var payrollPayments = await _dbContext.Set<PayrollPayment>()
+                .AsNoTracking().Where(c => c.PaidAt < end && c.PaidAt >= start && c.DocumentUrl != null).ToListAsync();
+
             if (!string.IsNullOrEmpty(_company.AccountantEmail))
             {
                 var message = new TemplatedPostmarkMessage
@@ -72,6 +76,16 @@ namespace WebAPI.ScheduleTasks
                         { "company_address", _company.Address! },
                     },
                 };
+
+                foreach (var p in payrollPayments)
+                {
+                    var file = p.DocumentUrl!.Split("/").Last();
+
+                    using (var stream = await _mestorage.Download(file))
+                    {
+                        message.AddAttachment(stream, $"payroll_payment_{p.PaidAt?.ToString("ddMMyyyy")}_{p.PayrollPaymentId}.pdf", MediaTypeNames.Application.Pdf);
+                    }
+                }
 
                 foreach (var me in moneyExchanges)
                 {
