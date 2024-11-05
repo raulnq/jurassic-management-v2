@@ -55,6 +55,9 @@
             <SidebarLink HtmxProps=@(new HtmxProps(WebAPI.TaxPayments.Endpoints.List.AddListParameters(), $"#{Workspace}") { OnClick = "highlight_sidebarlink(this);" })
                          Icon="bi bi-stripe"
                          Text=@WebAPI.TaxPayments.Endpoints.Title />
+            <SidebarLink HtmxProps=@(new HtmxProps(WebAPI.ScheduleTasks.Endpoints.List, $"#{Workspace}") { OnClick = "highlight_sidebarlink(this);" })
+                         Icon="bi bi-rocket-takeoff"
+                         Text=@WebAPI.ScheduleTasks.Endpoints.Title />
         </Content>
     </Sidebar>
     <main style="padding-left: 16.25rem; padding-top:3.875rem">

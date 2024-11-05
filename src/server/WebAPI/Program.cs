@@ -119,6 +119,7 @@ app.RegisterCollaboratorPaymentEndpoints();
 app.RegisterPayrollPaymentEndpoints();
 app.RegisterMoneyExchangeEndpoints();
 app.RegisterTransactionEndpoints();
+app.RegisterScheduleTasksEndpoints();
 app.RegisterUserEndpoints();
 app.RegisterBankBalanceEndpoints();
 app.RegisterCollaboratorBalanceEndpoints();

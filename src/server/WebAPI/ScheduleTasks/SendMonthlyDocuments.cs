@@ -1,6 +1,8 @@
 ﻿using Collections;
 using Coravel.Invocable;
 using Infrastructure;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoneyExchanges;
 using PostmarkDotNet;
@@ -10,18 +12,26 @@ using WebAPI.Collections;
 using WebAPI.Companies;
 using WebAPI.Infrastructure.EntityFramework;
 using WebAPI.Infrastructure.ExceptionHandling;
+using WebAPI.Infrastructure.Ui;
 using WebAPI.MoneyExchanges;
 using WebAPI.PayrollPayments;
 using WebAPI.Transactions;
 
 namespace WebAPI.ScheduleTasks
 {
+    public class RegisterMontlyPayrollPayment
+    {
+
+    }
+
+
     public class SendMonthlyDocuments : IInvocable
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IClock _clock;
         private readonly Company _company;
         private readonly MoneyExchangeStorage _mestorage;
+        private readonly PayrollPaymentStorage _ppstorage;
         private readonly CollectionStorage _cstorage;
         private readonly TransactionStorage _tstorage;
         private readonly PostmarkClient _client;
@@ -32,7 +42,8 @@ namespace WebAPI.ScheduleTasks
             MoneyExchangeStorage moneyExchangeStorage,
             CollectionStorage collectionStorage,
             TransactionStorage transactionStorage,
-            PostmarkClient client)
+            PostmarkClient client,
+            PayrollPaymentStorage ppstorage)
         {
             _dbContext = dbContext;
             _clock = clock;
@@ -41,7 +52,32 @@ namespace WebAPI.ScheduleTasks
             _cstorage = collectionStorage;
             _tstorage = transactionStorage;
             _client = client;
+            _ppstorage = ppstorage;
         }
+
+        public static async Task<RazorComponentResult> Trigger(
+            [FromServices] Company company,
+            [FromServices] ApplicationDbContext dbContext,
+            [FromServices] CollectionStorage collectionStorage,
+            [FromServices] TransactionStorage transactionStorage,
+            [FromServices] PayrollPaymentStorage ppstorage,
+            [FromServices] MoneyExchangeStorage moneyExchangeStorage,
+            [FromServices] IClock clock,
+            HttpContext httpContext,
+            [FromServices] PostmarkClient client)
+        {
+            await new SendMonthlyDocuments(dbContext,
+                clock,
+                company,
+                moneyExchangeStorage,
+                collectionStorage,
+                transactionStorage, client, ppstorage).Invoke();
+
+            httpContext.Response.Headers.TriggerShowSuccessMessage($"montly documents", "triggered", "");
+
+            return await ListScheduleTasks.HandlePage();
+        }
+
         public async Task Invoke()
         {
             var priorMonth = _clock.Now.DateTime.AddMonths(-1);
@@ -81,7 +117,7 @@ namespace WebAPI.ScheduleTasks
                 {
                     var file = p.DocumentUrl!.Split("/").Last();
 
-                    using (var stream = await _mestorage.Download(file))
+                    using (var stream = await _ppstorage.Download(file))
                     {
                         message.AddAttachment(stream, $"payroll_payment_{p.PaidAt?.ToString("ddMMyyyy")}_{p.PayrollPaymentId}.pdf", MediaTypeNames.Application.Pdf);
                     }

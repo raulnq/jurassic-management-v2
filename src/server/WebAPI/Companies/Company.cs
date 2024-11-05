@@ -1,4 +1,7 @@
-﻿namespace WebAPI.Companies
+﻿using WebAPI.CollaboratorPayments;
+using WebAPI.PayrollPayments;
+
+namespace WebAPI.Companies
 {
     public class Company
     {
@@ -10,5 +13,7 @@
         public string AccountantEmail { get; set; } = string.Empty;
         public string User { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public RegisterCollaboratorPayment.Command[]? CollaboratorPayments { get; set; }
+        public RegisterPayrollPayment.Command[]? PayrollPayments { get; set; }
     }
 }

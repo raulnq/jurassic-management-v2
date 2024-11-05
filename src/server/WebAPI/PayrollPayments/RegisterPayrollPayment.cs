@@ -28,7 +28,7 @@ public static class RegisterPayrollPayment
         [JsonIgnore]
         public DateTimeOffset CreatedAt { get; set; }
         public Currency Currency { get; set; }
-        public Guid MoneyExchangeId { get; set; }
+        public Guid? MoneyExchangeId { get; set; }
     }
 
     public class Result

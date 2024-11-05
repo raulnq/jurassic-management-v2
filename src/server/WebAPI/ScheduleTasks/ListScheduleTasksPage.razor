@@ -1,0 +1,17 @@
+﻿@using WebAPI.CollaboratorRoles;
+@using WebAPI.Infrastructure.SqlKata;
+@using WebAPI.Infrastructure.Ui;
+@using global::Infrastructure
+
+<Heading Text=@Endpoints.Title />
+<Breadcrumbs Links=@(new []{new Breadcrumbs.Link(Endpoints.ListTitle)})
+             Target=@($"#{WebAPI.Users.MainPage.Workspace}") />
+<Toolbar>
+    <Actions>
+        <ActionButton Text=@Endpoints.TriggerMonthlyDocumentsTitle
+                      Icon=@Icons.Add
+                      HtmxProps=@(new HtmxProps(Endpoints.TriggerMonthlyDocuments, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST"}) />
+    </Actions>
+</Toolbar>
+@code {
+}
