@@ -28,7 +28,7 @@ public static class GetCollaboratorBalance
             {
                 var statement = qf
                 .Query(Tables.VwCollaboratorBalance)
-                .SelectRaw("SUM(NetSalary*Sign) as Total")
+                .SelectRaw("SUM(GrossSalary*Sign) as Total")
                 .Where(Tables.VwCollaboratorBalance.Field("Currency"), query.Currency)
                 .Where(Tables.VwCollaboratorBalance.Field("CollaboratorId"), query.CollaboratorId);
 

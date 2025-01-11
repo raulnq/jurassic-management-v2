@@ -29,7 +29,7 @@ public class CollaboratorPayment
     public DateTimeOffset? CanceledAt { get; private set; }
     public decimal ExchangeRate { get; private set; }
     public Guid? TaxPaymentId { get; private set; }
-
+    public bool ExcludeFromBankBalance { get; private set; }
     private CollaboratorPayment() { }
 
     public void AddInTaxPayment(Guid taxPaymentId)
@@ -76,6 +76,17 @@ public class CollaboratorPayment
             ITF = 0;
         }
     }
+
+    public void Exclude()
+    {
+        ExcludeFromBankBalance = true;
+    }
+
+    public void Include()
+    {
+        ExcludeFromBankBalance = false;
+    }
+
     public void Pay(DateTime paidAt)
     {
         EnsureStatus(CollaboratorPaymentStatus.Pending);

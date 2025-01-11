@@ -25,6 +25,12 @@
         <MenuItem HtmxProps=@(new HtmxProps(Endpoints.Send, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"collaboratorPaymentId":"{{Result.CollaboratorPaymentId}}"}"""})
                   IsDisabled=@(Result.Status !=CollaboratorPaymentStatus.Paid.ToString())
                   Text="Send" />
+        <MenuItem HtmxProps=@(new HtmxProps(Endpoints.ExcludeFromTaxes, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"collaboratorPaymentId":"{{Result.CollaboratorPaymentId}}"}"""})
+                  IsDisabled=@(Result.Status !=CollaboratorPaymentStatus.Pending.ToString() || Result.ExcludeFromBankBalance==true)
+                  Text=@Endpoints.ExcludeFromTaxesTitle />
+        <MenuItem HtmxProps=@(new HtmxProps(Endpoints.IncludeFromTaxes, $"#{WebAPI.Users.MainPage.Workspace}"){ Confirm = "Are you sure?", HttpMethod="POST", Vals=$$"""{"collaboratorPaymentId":"{{Result.CollaboratorPaymentId}}"}"""})
+                  IsDisabled=@(Result.Status !=CollaboratorPaymentStatus.Pending.ToString() || Result.ExcludeFromBankBalance==false)
+                  Text=@Endpoints.IncludeFromTaxesTitle />
     </MenuItems>
 </Breadcrumbs>
 <Toolbar>
@@ -43,6 +49,10 @@
         <Text Property=@nameof(GetCollaboratorPayment.Result.Status)
               Value=@Result.Status
               Label="Status" />
+        <Divider />
+        <Text Property=@nameof(GetCollaboratorPayment.Result.ExcludeFromBankBalance)
+              Value=@Result.ExcludeFromBankBalance
+              Label="Exclude" />
         <Divider />
     </Actions>
 </Toolbar>

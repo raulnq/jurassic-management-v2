@@ -351,10 +351,7 @@ public class ProformaWeekWorkItem
     public decimal SubTotal { get; private set; }
     public decimal ProfitAmount { get; private set; }
     public decimal ProfitPercentage { get; private set; }
-    public decimal Withholding { get; private set; }
-    public decimal WithholdingPercentage { get; private set; }
     public decimal GrossSalary { get; private set; }
-    public decimal NetSalary { get; private set; }
 
     private ProformaWeekWorkItem()
     {
@@ -370,7 +367,6 @@ public class ProformaWeekWorkItem
         FreeHours = freeHours;
         FeeAmount = collaboratorRole.FeeAmount;
         ProfitPercentage = collaboratorRole.ProfitPercentage;
-        WithholdingPercentage = collaborator.WithholdingPercentage;
         Refresh();
     }
 
@@ -379,8 +375,6 @@ public class ProformaWeekWorkItem
         SubTotal = (Hours - FreeHours) * FeeAmount;
         ProfitAmount = (SubTotal * ProfitPercentage) / 100;
         GrossSalary = SubTotal - ProfitAmount;
-        Withholding = Math.Round((GrossSalary * WithholdingPercentage) / 100, 2, MidpointRounding.AwayFromZero);
-        NetSalary = Math.Round(GrossSalary - Withholding, 2, MidpointRounding.AwayFromZero);
     }
 
     public void Edit(decimal hours, decimal freeHours)
@@ -528,20 +522,20 @@ public class WorkItemEntityTypeConfiguration : IEntityTypeConfiguration<Proforma
             .Property(c => c.ProfitPercentage)
             .HasColumnType("decimal(19, 4)");
 
-        builder
-            .Property(c => c.WithholdingPercentage)
-            .HasColumnType("decimal(19, 4)");
+        //builder
+        //    .Property(c => c.WithholdingPercentage)
+        //    .HasColumnType("decimal(19, 4)");
 
-        builder
-            .Property(c => c.Withholding)
-            .HasColumnType("decimal(19, 4)");
+        //builder
+        //    .Property(c => c.Withholding)
+        //    .HasColumnType("decimal(19, 4)");
 
         builder
             .Property(c => c.GrossSalary)
             .HasColumnType("decimal(19, 4)");
 
-        builder
-            .Property(c => c.NetSalary)
-            .HasColumnType("decimal(19, 4)");
+        //builder
+        //    .Property(c => c.NetSalary)
+        //    .HasColumnType("decimal(19, 4)");
     }
 }

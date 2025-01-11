@@ -124,8 +124,8 @@ public static class ListCollaboratorBalance
 
         foreach (var item in result)
         {
-            item.Balance = item.SignedNetSalary + endBalance;
-            endBalance = item.SignedNetSalary + endBalance;
+            item.Balance = item.SignedGrossSalary + endBalance;
+            endBalance = item.SignedGrossSalary + endBalance;
         }
 
         var collaborators = await dbContext.Set<Collaborator>().AsNoTracking().ToListAsync();

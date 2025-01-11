@@ -29,6 +29,7 @@ public static class GetCollaboratorPayment
         public string? Currency { get; set; }
         public DateTimeOffset? CanceledAt { get; set; }
         public decimal ExchangeRate { get; set; }
+        public bool ExcludeFromBankBalance { get; set; }
     }
 
     public class Runner : BaseRunner
