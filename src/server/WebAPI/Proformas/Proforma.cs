@@ -229,7 +229,7 @@ public class Proforma
 
         AdministrativeExpensesAmount = AdministrativeExpensesPercentage * SubTotal / 100;
 
-        BankingExpensesAmount = AdministrativeExpensesPercentage * SubTotal / 100;
+        BankingExpensesAmount = BankingExpensesPercentage * SubTotal / 100;
 
         if (BankingExpensesAmount < MinimumBankingExpenses)
         {
