@@ -1,9 +1,9 @@
-﻿@using Microsoft.AspNetCore.Http.Extensions
+@using Microsoft.AspNetCore.Http.Extensions
 @using WebAPI.Infrastructure.SqlKata
 @typeparam TResult
 
 <nav>
-    <ul class="pagination" hx-ext="path-params">
+    <ul class="pagination flex-wrap" hx-ext="path-params">
         <li class="page-item @(Result.HasPreviousPage?"":"disabled")">
             @if (string.IsNullOrEmpty(HtmxProps.Select))
             {
@@ -24,35 +24,115 @@
                    hx-target=@HtmxProps.Target
                    hx-select=@HtmxProps.Select>Previous</a>
             }
-
         </li>
-        @for (int i = 1; i <= Result.TotalPages; i++)
-        {
-            @if (string.IsNullOrEmpty(HtmxProps.Select))
-            {
-                <li class="page-item @(Result.Page==i?"active":"")">
-                    <a class="page-link"
-                       href="#"
-                       hx-get="@GetUrl(i)"
-                       hx-swap=@HtmxProps.Swap
-                       hx-vals=@HtmxProps.Vals
-                       hx-target=@HtmxProps.Target>@i</a>
-                </li>
-            }
-            else
-            {
-                <li class="page-item @(Result.Page==i?"active":"")">
-                    <a class="page-link"
-                       href="#"
-                       hx-get="@GetUrl(i)"
-                       hx-swap=@HtmxProps.Swap
-                       hx-vals=@HtmxProps.Vals
-                       hx-target=@HtmxProps.Target
-                       hx-select=@HtmxProps.Select>@i</a>
-                </li>
-            }
 
+        @{
+            const int maxPagesToShow = 5;
+            int startPage = Math.Max(1, Result.Page - (maxPagesToShow / 2));
+            int endPage = Math.Min(Result.TotalPages, startPage + maxPagesToShow - 1);
+            
+            if (endPage - startPage + 1 < maxPagesToShow && startPage > 1)
+            {
+                startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+            }
+            
+            if (startPage > 1)
+            {
+                if (string.IsNullOrEmpty(HtmxProps.Select))
+                {
+                    <li class="page-item @(Result.Page==1?"active":"")">
+                        <a class="page-link"
+                           href="#"
+                           hx-get="@GetUrl(1)"
+                           hx-swap=@HtmxProps.Swap
+                           hx-vals=@HtmxProps.Vals
+                           hx-target=@HtmxProps.Target>1</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item @(Result.Page==1?"active":"")">
+                        <a class="page-link"
+                           href="#"
+                           hx-get="@GetUrl(1)"
+                           hx-swap=@HtmxProps.Swap
+                           hx-vals=@HtmxProps.Vals
+                           hx-target=@HtmxProps.Target
+                           hx-select=@HtmxProps.Select>1</a>
+                    </li>
+                }
+                
+                if (startPage > 2)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+            }
+            
+            for (int i = startPage; i <= endPage; i++)
+            {
+                int pageNumber = i;
+                if (string.IsNullOrEmpty(HtmxProps.Select))
+                {
+                    <li class="page-item @(Result.Page==pageNumber?"active":"")">
+                        <a class="page-link"
+                           href="#"
+                           hx-get="@GetUrl(pageNumber)"
+                           hx-swap=@HtmxProps.Swap
+                           hx-vals=@HtmxProps.Vals
+                           hx-target=@HtmxProps.Target>@pageNumber</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item @(Result.Page==pageNumber?"active":"")">
+                        <a class="page-link"
+                           href="#"
+                           hx-get="@GetUrl(pageNumber)"
+                           hx-swap=@HtmxProps.Swap
+                           hx-vals=@HtmxProps.Vals
+                           hx-target=@HtmxProps.Target
+                           hx-select=@HtmxProps.Select>@pageNumber</a>
+                    </li>
+                }
+            }
+            
+            if (endPage < Result.TotalPages)
+            {
+                if (endPage < Result.TotalPages - 1)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+                
+                if (string.IsNullOrEmpty(HtmxProps.Select))
+                {
+                    <li class="page-item @(Result.Page==Result.TotalPages?"active":"")">
+                        <a class="page-link"
+                           href="#"
+                           hx-get="@GetUrl(Result.TotalPages)"
+                           hx-swap=@HtmxProps.Swap
+                           hx-vals=@HtmxProps.Vals
+                           hx-target=@HtmxProps.Target>@Result.TotalPages</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item @(Result.Page==Result.TotalPages?"active":"")">
+                        <a class="page-link"
+                           href="#"
+                           hx-get="@GetUrl(Result.TotalPages)"
+                           hx-swap=@HtmxProps.Swap
+                           hx-vals=@HtmxProps.Vals
+                           hx-target=@HtmxProps.Target
+                           hx-select=@HtmxProps.Select>@Result.TotalPages</a>
+                    </li>
+                }
+            }
         }
+        
         @if (string.IsNullOrEmpty(HtmxProps.Select))
         {
             <li class="page-item @(Result.HasNextPage?"":"disabled")">
@@ -76,7 +156,6 @@
                    hx-select=@HtmxProps.Select>Next</a>
             </li>
         }
-
     </ul>
 </nav>
 
@@ -100,10 +179,14 @@
                 parameters.Add(new KeyValuePair<string, string>(parameter.Key, parameter.Value!.ToString()!));
             }
         }
-        parameters.Add(new KeyValuePair<string, string>("page", page.ToString()));
-        parameters.Add(new KeyValuePair<string, string>("pageSize", Query.PageSize.ToString()));
-        parameters.Add(new KeyValuePair<string, string>("ascending", Query.Ascending.ToString()));
-        var queryBuilder = new QueryBuilder(parameters);
-        return HtmxProps.Endpoint + queryBuilder;
+        var queryBuilder = new QueryBuilder();
+        queryBuilder.Add("page", page.ToString());
+        queryBuilder.Add("pageSize", Query.PageSize.ToString());
+        queryBuilder.Add("ascending", Query.Ascending.ToString());
+        foreach (var parameter in parameters)
+        {
+            queryBuilder.Add(parameter.Key, parameter.Value);
+        }
+        return $"{HtmxProps.Endpoint}{queryBuilder}";
     }
 }

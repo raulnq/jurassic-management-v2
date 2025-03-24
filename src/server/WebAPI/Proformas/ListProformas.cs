@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Clients;
 using WebAPI.Infrastructure.EntityFramework;
@@ -14,6 +14,7 @@ public static class ListProformas
         public string? Status { get; set; }
         public string? Number { get; set; }
         public IEnumerable<Guid>? ProformaId { get; set; }
+        public string? Month { get; set; }
     }
 
     public class Result
@@ -57,6 +58,7 @@ public static class ListProformas
             .Select(Tables.Clients.Field(nameof(Client.Name), nameof(Result.ClientName)))
             .Join(Tables.Projects, Tables.Projects.Field(nameof(Project.ProjectId)), Tables.Proformas.Field(nameof(Proforma.ProjectId)))
             .Join(Tables.Clients, Tables.Clients.Field(nameof(Client.ClientId)), Tables.Projects.Field(nameof(Project.ClientId)))
+            .OrderByDesc(Tables.Proformas.Field(nameof(Proforma.Start)))
             ;
 
             if (!string.IsNullOrEmpty(query.Status))
@@ -70,6 +72,15 @@ public static class ListProformas
             if (query.ProformaId != null && query.ProformaId.Any())
             {
                 statement = statement.WhereIn(Tables.Proformas.Field(nameof(Proforma.ProformaId)), query.ProformaId);
+            }
+            if (!string.IsNullOrEmpty(query.Month))
+            {
+                // Month input value format is YYYY-MM
+                var parts = query.Month.Split('-');
+                if (parts.Length == 2 && int.TryParse(parts[0], out int year) && int.TryParse(parts[1], out int month))
+                {
+                    statement = statement.WhereRaw($"YEAR({Tables.Proformas.Field(nameof(Proforma.Start))}) = ? AND MONTH({Tables.Proformas.Field(nameof(Proforma.Start))}) = ?", year, month);
+                }
             }
             return statement;
         }, query);

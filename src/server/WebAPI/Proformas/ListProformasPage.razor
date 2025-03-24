@@ -1,4 +1,4 @@
-﻿@using WebAPI.Proformas;
+@using WebAPI.Proformas;
 @using WebAPI.Infrastructure.SqlKata;
 @using WebAPI.Infrastructure.Ui;
 @using global::Infrastructure
@@ -17,8 +17,8 @@
     <Content>
         <FormRow>
             <Content>
-                <div class="col-6">
-                    <SelectFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"){Include=$"#{nameof(ListProformas.Query.Number)}"})
+                <div class="col-4">
+                    <SelectFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"){Include=$"#{nameof(ListProformas.Query.Number)},#{nameof(ListProformas.Query.Month)}"})
                                   Label="Status"
                                   Property=@(nameof(ListProformas.Query.Status))
                                   Query=@Query
@@ -26,11 +26,17 @@
                                   Source=@(Enum.GetValues<ProformaStatus>().ToDictionary(i=>i.ToString(), i=>i.ToString()))>
                     </SelectFilter>
                 </div>
-                <div class="col-6">
+                <div class="col-4">
                     <SearchFilter Label="Number"
                                   Property=@nameof(ListProformas.Query.Number)
                                   Query=@Query
-                                  HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"){Include=$"#{nameof(ListProformas.Query.Status)}"}) />
+                                  HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"){Include=$"#{nameof(ListProformas.Query.Status)},#{nameof(ListProformas.Query.Month)}"}) />
+                </div>
+                <div class="col-4">
+                    <MonthFilter Property=@nameof(ListProformas.Query.Month)
+                                Query=@Query
+                                Label="Start Date"
+                                HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"){Include=$"#{nameof(ListProformas.Query.Status)},#{nameof(ListProformas.Query.Number)}"}) />
                 </div>
             </Content>
         </FormRow>
@@ -71,7 +77,12 @@
             <Pagination Query=@Query
                         Result=@Result
                         HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"))
-                        Parameters=@(new KeyValuePair<string, object?>[]{ new (nameof(Query.Status), Query.Status), new (nameof(Query.Number), Query.Number)}) />
+                        Parameters=@(new KeyValuePair<string, object?>[]
+                        { 
+                            new (nameof(Query.Status), Query.Status), 
+                            new (nameof(Query.Number), Query.Number),
+                            new (nameof(Query.Month), Query.Month)
+                        }) />
         </div>
     </Content>
 </Section>
