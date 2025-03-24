@@ -91,6 +91,6 @@ public static class RegisterProforma
 
         context.Response.Headers.TriggerShowRegisterSuccessMessage($"proforma", register.Value!.ProformaId);
 
-        return await ListProformas.HandlePage(new ListProformas.Query() { }, runner);
+        return await ListProformas.HandlePage(new ListProformas.Query() { }, runner, dbContext);
     }
 }

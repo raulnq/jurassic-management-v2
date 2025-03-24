@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebAPI.Clients;
 using WebAPI.Infrastructure.EntityFramework;
 using WebAPI.Infrastructure.SqlKata;
@@ -15,6 +16,7 @@ public static class ListProformas
         public string? Number { get; set; }
         public IEnumerable<Guid>? ProformaId { get; set; }
         public string? Month { get; set; }
+        public Guid? ClientId { get; set; }
     }
 
     public class Result
@@ -82,6 +84,10 @@ public static class ListProformas
                     statement = statement.WhereRaw($"YEAR({Tables.Proformas.Field(nameof(Proforma.Start))}) = ? AND MONTH({Tables.Proformas.Field(nameof(Proforma.Start))}) = ?", year, month);
                 }
             }
+            if (query.ClientId.HasValue && query.ClientId != Guid.Empty)
+            {
+                statement = statement.Where(Tables.Clients.Field(nameof(Client.ClientId)), query.ClientId.Value);
+            }
             return statement;
         }, query);
 
@@ -90,10 +96,18 @@ public static class ListProformas
 
     public static async Task<RazorComponentResult> HandlePage(
         [AsParameters] Query query,
-        [FromServices] SqlKataQueryRunner runner)
+        [FromServices] SqlKataQueryRunner runner,
+        [FromServices] ApplicationDbContext dbContext)
     {
         var result = await Handle(runner, query);
 
-        return new RazorComponentResult<ListProformasPage>(new { Result = result.Value, Query = query });
+        var clients = await dbContext.Set<Client>().AsNoTracking().ToListAsync();
+
+        return new RazorComponentResult<ListProformasPage>(new
+        {
+            Result = result.Value,
+            Query = query,
+            Clients = clients
+        });
     }
 }

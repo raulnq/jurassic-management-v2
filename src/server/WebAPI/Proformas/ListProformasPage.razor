@@ -2,6 +2,7 @@
 @using WebAPI.Infrastructure.SqlKata;
 @using WebAPI.Infrastructure.Ui;
 @using global::Infrastructure
+@using WebAPI.Clients;
 
 <Heading Text=@Endpoints.Title />
 <Breadcrumbs Links=@(new []{new Breadcrumbs.Link(Endpoints.ListTitle)})
@@ -17,8 +18,8 @@
     <Content>
         <FormRow>
             <Content>
-                <div class="col-4">
-                    <SelectFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"){Include=$"#{nameof(ListProformas.Query.Number)},#{nameof(ListProformas.Query.Month)}"})
+                <div class="col-3">
+                    <SelectFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"){Include=$"#{nameof(ListProformas.Query.Number)},#{nameof(ListProformas.Query.Month)},#{nameof(ListProformas.Query.ClientId)}"})
                                   Label="Status"
                                   Property=@(nameof(ListProformas.Query.Status))
                                   Query=@Query
@@ -26,17 +27,27 @@
                                   Source=@(Enum.GetValues<ProformaStatus>().ToDictionary(i=>i.ToString(), i=>i.ToString()))>
                     </SelectFilter>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                     <SearchFilter Label="Number"
                                   Property=@nameof(ListProformas.Query.Number)
                                   Query=@Query
-                                  HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"){Include=$"#{nameof(ListProformas.Query.Status)},#{nameof(ListProformas.Query.Month)}"}) />
+                                  HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"){Include=$"#{nameof(ListProformas.Query.Status)},#{nameof(ListProformas.Query.Month)},#{nameof(ListProformas.Query.ClientId)}"}) />
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                     <MonthFilter Property=@nameof(ListProformas.Query.Month)
-                                Query=@Query
-                                Label="Start Date"
-                                HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"){Include=$"#{nameof(ListProformas.Query.Status)},#{nameof(ListProformas.Query.Number)}"}) />
+                                 Query=@Query
+                                 Label="Start Date"
+                                 HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"){Include=$"#{nameof(ListProformas.Query.Status)},#{nameof(ListProformas.Query.Number)},#{nameof(ListProformas.Query.ClientId)}"}) />
+                </div>
+                <div class="col-3">
+                    <SelectFilter HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}",Swap.OuterHTML,$"#{List}"){Include=$"#{nameof(ListProformas.Query.Number)},#{nameof(ListProformas.Query.Month)},#{nameof(ListProformas.Query.Status)}"})
+                                  Label="Client"
+                                  Property=@(nameof(ListProformas.Query.ClientId))
+                                  Query=@Query
+                                  EmptyLabel="All Clients"
+                                  EmptyValue="00000000-0000-0000-0000-000000000000"
+                                  Source=@Clients.ToDictionary(c=>c.ClientId.ToString(), c=>c.Name)>
+                    </SelectFilter>
                 </div>
             </Content>
         </FormRow>
@@ -78,10 +89,11 @@
                         Result=@Result
                         HtmxProps=@(new HtmxProps(Endpoints.List, $"#{List}", Swap.OuterHTML, $"#{List}"))
                         Parameters=@(new KeyValuePair<string, object?>[]
-                        { 
-                            new (nameof(Query.Status), Query.Status), 
-                            new (nameof(Query.Number), Query.Number),
-                            new (nameof(Query.Month), Query.Month)
+                        {
+                        new (nameof(Query.Status), Query.Status),
+                        new (nameof(Query.Number), Query.Number),
+                        new (nameof(Query.Month), Query.Month),
+                        new (nameof(Query.ClientId), Query.ClientId)
                         }) />
         </div>
     </Content>
@@ -91,6 +103,8 @@
     public ListResults<ListProformas.Result> Result { get; set; } = default!;
     [Parameter, EditorRequired]
     public ListProformas.Query Query { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public IEnumerable<Client> Clients { get; set; } = default!;
 
     public const string List = "proforma-list-target";
 }
